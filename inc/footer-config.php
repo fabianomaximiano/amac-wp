@@ -32,62 +32,108 @@ if (class_exists('WP_Customize_Control') && !class_exists('Theme_Customizer_Sect
     }
 }
 
+/**
+ * Registra configurações do rodapé no Customizer
+ */
 function theme_customize_footer($wp_customize)
 {
     $wp_customize->add_section('theme_footer_section', array(
         'title'       => __('Rodapé', 'amac-wp'),
         'priority'    => 160,
-        'description' => __('Configure as informações exibidas no rodapé do site.', 'amac-wp'),
+        'description' => __('Configure as informações, cores e redes sociais do rodapé.', 'amac-wp'),
     ));
 
     /*
     |--------------------------------------------------------------------------
-    | Estilo do rodapé
+    | Cores do rodapé
     |--------------------------------------------------------------------------
     */
-    $wp_customize->add_setting('theme_footer_heading_style', array(
+    $wp_customize->add_setting('theme_footer_heading_colors', array(
         'sanitize_callback' => 'sanitize_text_field',
     ));
 
     $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
         $wp_customize,
-        'theme_footer_heading_style',
+        'theme_footer_heading_colors',
         array(
-            'label'       => __('Estilo visual', 'amac-wp'),
-            'description' => __('Controle as cores principais do rodapé e dos ícones sociais.', 'amac-wp'),
+            'label'       => __('Cores do Rodapé', 'amac-wp'),
+            'description' => __('Defina as cores principais do fundo, textos, links e ícones do rodapé.', 'amac-wp'),
             'section'     => 'theme_footer_section',
-            'settings'    => 'theme_footer_heading_style',
+            'settings'    => 'theme_footer_heading_colors',
         )
     ));
 
-    $color_controls = array(
+    $footer_color_controls = array(
         'footer_bg_color' => array(
             'label'   => __('Cor de fundo do rodapé', 'amac-wp'),
             'default' => '#f5f5f5',
         ),
         'footer_text_color' => array(
-            'label'   => __('Cor do texto do rodapé', 'amac-wp'),
+            'label'   => __('Cor do texto', 'amac-wp'),
             'default' => '#111111',
         ),
         'footer_heading_color' => array(
-            'label'   => __('Cor dos títulos do rodapé', 'amac-wp'),
+            'label'   => __('Cor dos títulos', 'amac-wp'),
             'default' => '#111111',
         ),
         'footer_link_color' => array(
-            'label'   => __('Cor dos links do rodapé', 'amac-wp'),
+            'label'   => __('Cor dos links', 'amac-wp'),
             'default' => '#0d6efd',
         ),
+        'footer_hr_color' => array(
+            'label'   => __('Cor da linha divisória', 'amac-wp'),
+            'default' => '#d9d9d9',
+        ),
+    );
+
+    foreach ($footer_color_controls as $setting_id => $config) {
+        $wp_customize->add_setting($setting_id, array(
+            'default'           => $config['default'],
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+
+        $wp_customize->add_control(new WP_Customize_Color_Control(
+            $wp_customize,
+            $setting_id,
+            array(
+                'label'   => $config['label'],
+                'section' => 'theme_footer_section',
+            )
+        ));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cores dos ícones sociais
+    |--------------------------------------------------------------------------
+    */
+    $wp_customize->add_setting('theme_footer_heading_icon_colors', array(
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_footer_heading_icon_colors',
+        array(
+            'label'       => __('Cores dos Ícones Sociais', 'amac-wp'),
+            'description' => __('Controle a cor do ícone, fundo, borda e efeito ao passar o mouse.', 'amac-wp'),
+            'section'     => 'theme_footer_section',
+            'settings'    => 'theme_footer_heading_icon_colors',
+        )
+    ));
+
+    $icon_color_controls = array(
         'footer_icon_color' => array(
-            'label'   => __('Cor dos ícones sociais', 'amac-wp'),
+            'label'   => __('Cor dos ícones', 'amac-wp'),
             'default' => '#111111',
         ),
         'footer_icon_bg_color' => array(
             'label'   => __('Cor de fundo dos ícones', 'amac-wp'),
-            'default' => 'transparent',
+            'default' => '#ffffff',
         ),
         'footer_icon_border_color' => array(
             'label'   => __('Cor da borda dos ícones', 'amac-wp'),
-            'default' => 'rgba(0,0,0,0.15)',
+            'default' => '#d9d9d9',
         ),
         'footer_icon_hover_color' => array(
             'label'   => __('Cor dos ícones no hover', 'amac-wp'),
@@ -99,7 +145,7 @@ function theme_customize_footer($wp_customize)
         ),
     );
 
-    foreach ($color_controls as $setting_id => $config) {
+    foreach ($icon_color_controls as $setting_id => $config) {
         $wp_customize->add_setting($setting_id, array(
             'default'           => $config['default'],
             'sanitize_callback' => 'sanitize_text_field',
@@ -543,31 +589,33 @@ function theme_footer_customizer_styles()
         }
 
         #sub-accordion-section-theme_footer_section .customize-control {
-            margin-bottom: 16px;
-            padding: 14px;
+            margin-bottom: 8px;
+            padding: 8px;
             background: #ffffff;
             border: 1px solid #dcdcde;
-            border-radius: 12px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
         #sub-accordion-section-theme_footer_section .customize-control label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: #1d2327;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            line-height: 1.25;
         }
 
         #sub-accordion-section-theme_footer_section .description {
-            margin-top: 8px;
+            margin-top: 4px;
             color: #646970;
             font-style: normal;
-            line-height: 1.5;
+            font-size: 10.5px;
+            line-height: 1.35;
         }
 
         #sub-accordion-section-theme_footer_section input[type="text"],
@@ -575,47 +623,83 @@ function theme_footer_customizer_styles()
         #sub-accordion-section-theme_footer_section textarea,
         #sub-accordion-section-theme_footer_section select {
             width: 100%;
-            min-height: 42px;
-            border-radius: 8px;
+            min-height: 32px;
+            border-radius: 6px;
             border: 1px solid #c3c4c7;
-            padding: 10px 12px;
+            padding: 6px 8px;
             box-sizing: border-box;
             background: #fff;
             transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+            font-size: 12px;
+            line-height: 1.25;
         }
 
         #sub-accordion-section-theme_footer_section textarea {
-            min-height: 110px;
+            min-height: 70px;
             resize: vertical;
+        }
+
+        #sub-accordion-section-theme_footer_section input[type="text"]:focus,
+        #sub-accordion-section-theme_footer_section input[type="email"]:focus,
+        #sub-accordion-section-theme_footer_section textarea:focus,
+        #sub-accordion-section-theme_footer_section select:focus {
+            border-color: #2271b1;
+            box-shadow: 0 0 0 1px #2271b1;
+            outline: 0;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control-theme_section_title {
             padding: 0;
-            margin: 26px 0 12px;
+            margin: 14px 0 6px;
             background: transparent;
             border: 0;
             box-shadow: none;
         }
 
+        #sub-accordion-section-theme_footer_section .customize-control-theme_section_title:first-of-type {
+            margin-top: 4px;
+        }
+
+        .theme-customizer-group-title {
+            padding: 0 1px;
+        }
+
         .theme-customizer-group-title-text {
             display: block;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             color: #1d2327;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            line-height: 1.2;
         }
 
         .theme-customizer-group-description {
             display: block;
             color: #646970;
-            font-size: 12px;
-            line-height: 1.5;
+            font-size: 10.5px;
+            line-height: 1.3;
         }
 
         .theme-cep-status {
-            margin-top: 8px;
-            font-size: 12px;
-            line-height: 1.4;
+            margin-top: 4px;
+            font-size: 10.5px;
+            line-height: 1.3;
+        }
+
+        #sub-accordion-section-theme_footer_section .wp-picker-container .wp-color-result.button {
+            height: 28px;
+            min-height: 28px;
+            border-radius: 6px;
+            margin: 0;
+        }
+
+        #sub-accordion-section-theme_footer_section .wp-picker-container .wp-color-result-text {
+            line-height: 26px;
+            font-size: 11px;
+        }
+
+        #sub-accordion-section-theme_footer_section .customize-control .customize-control-notifications-container {
+            margin-bottom: 4px;
         }
     </style>
     <?php
@@ -827,9 +911,10 @@ function theme_footer_dynamic_css()
     $footer_text_color          = get_theme_mod('footer_text_color', '#111111');
     $footer_heading_color       = get_theme_mod('footer_heading_color', '#111111');
     $footer_link_color          = get_theme_mod('footer_link_color', '#0d6efd');
+    $footer_hr_color            = get_theme_mod('footer_hr_color', '#d9d9d9');
     $footer_icon_color          = get_theme_mod('footer_icon_color', '#111111');
-    $footer_icon_bg_color       = get_theme_mod('footer_icon_bg_color', 'transparent');
-    $footer_icon_border_color   = get_theme_mod('footer_icon_border_color', 'rgba(0,0,0,0.15)');
+    $footer_icon_bg_color       = get_theme_mod('footer_icon_bg_color', '#ffffff');
+    $footer_icon_border_color   = get_theme_mod('footer_icon_border_color', '#d9d9d9');
     $footer_icon_hover_color    = get_theme_mod('footer_icon_hover_color', '#ffffff');
     $footer_icon_hover_bg_color = get_theme_mod('footer_icon_hover_bg_color', '#0d6efd');
     ?>
@@ -839,6 +924,7 @@ function theme_footer_dynamic_css()
             --theme-footer-text: <?php echo esc_html($footer_text_color); ?>;
             --theme-footer-heading: <?php echo esc_html($footer_heading_color); ?>;
             --theme-footer-link: <?php echo esc_html($footer_link_color); ?>;
+            --theme-footer-hr: <?php echo esc_html($footer_hr_color); ?>;
             --theme-footer-icon: <?php echo esc_html($footer_icon_color); ?>;
             --theme-footer-icon-bg: <?php echo esc_html($footer_icon_bg_color); ?>;
             --theme-footer-icon-border: <?php echo esc_html($footer_icon_border_color); ?>;
