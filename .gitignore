@@ -1,0 +1,53 @@
+# WordPress
+wp-admin/
+wp-includes/
+xmlrpc.php
+wp-*.php
+license.txt
+readme.html
+
+# Uploads
+wp-content/uploads/
+
+# Cache
+wp-content/cache/
+wp-content/advanced-cache.php
+
+# Plugins (opcional ignorar)
+# wp-content/plugins/
+
+# Node (caso use futuramente)
+node_modules/
+npm-debug.log
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+db_data/
+*.sql
+
+# Environment
+.env
+
+# Backup
+*.zip
+*.tar.gz
+
+# Composer (se usar)
+vendor/
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Windows
+Desktop.ini

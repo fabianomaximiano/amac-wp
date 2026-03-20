@@ -1,0 +1,82 @@
+/* ==========================
+   HERO
+========================== */
+.hero-section {
+    background: linear-gradient(135deg, var(--azul-escuro), var(--azul-principal));
+    padding: 100px 0;
+    color: var(--branco);
+}
+
+/* FORMULÁRIO */
+.hero-section .card {
+    border-radius: 10px;
+    border: none;
+}
+
+/* ==========================
+   SERVIÇOS
+========================== */
+.servicos {
+    background: linear-gradient(135deg, var(--azul-principal), var(--azul-claro));
+}
+
+.card-servico {
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    transition: 0.3s;
+    color: var(--branco);
+}
+
+.card-servico:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.2);
+}
+
+/* ==========================
+   CTA
+========================== */
+.cta {
+    background: var(--cinza-bg);
+}
+
+.cta h3 {
+    color: var(--azul-escuro);
+}
+
+/* ==========================
+   SOBRE
+========================== */
+.sobre {
+    background: var(--branco);
+}
+
+.sobre h2 {
+    color: var(--azul-escuro);
+}
+
+/* ==========================
+   AVALIAÇÕES
+========================== */
+.avaliacoes {
+    background: var(--cinza-bg);
+}
+
+.avaliacoes .card {
+    border: none;
+    border-radius: 10px;
+}
+
+/* ==========================
+   MAPA
+========================== */
+.mapa {
+    background: var(--branco);
+}
+
+/* ==========================
+   FOOTER
+========================== */
+footer {
+    background: var(--azul-escuro);
+    color: var(--branco);
+}
