@@ -6,6 +6,21 @@ function chaveiro_servicos_section_customize($wp_customize)
         'title' => 'Seção de Serviços',
     ]);
 
+    $wp_customize->add_setting('theme_servicos_heading_geral', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_servicos_heading_geral',
+        [
+            'label'       => 'Conteúdo da seção',
+            'description' => 'Configure ativação, título, subtítulo e tipo de fundo da seção de serviços.',
+            'section'     => 'servicos_section',
+            'settings'    => 'theme_servicos_heading_geral',
+        ]
+    ));
+
     $wp_customize->add_setting('servicos_section_ativo', [
         'default' => true,
     ]);
@@ -21,9 +36,12 @@ function chaveiro_servicos_section_customize($wp_customize)
     ]);
 
     $wp_customize->add_control('servicos_section_titulo', [
-        'label'   => 'Título da seção',
-        'section' => 'servicos_section',
-        'type'    => 'text',
+        'label'       => 'Título da seção',
+        'section'     => 'servicos_section',
+        'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'Ex.: Nossos Principais Serviços',
+        ],
     ]);
 
     $wp_customize->add_setting('servicos_section_subtitulo', [
@@ -31,9 +49,12 @@ function chaveiro_servicos_section_customize($wp_customize)
     ]);
 
     $wp_customize->add_control('servicos_section_subtitulo', [
-        'label'   => 'Subtítulo da seção',
-        'section' => 'servicos_section',
-        'type'    => 'textarea',
+        'label'       => 'Subtítulo da seção',
+        'section'     => 'servicos_section',
+        'type'        => 'textarea',
+        'input_attrs' => [
+            'placeholder' => 'Descreva de forma curta os diferenciais da seção de serviços.',
+        ],
     ]);
 
     $wp_customize->add_setting('servicos_section_bg_type', [
@@ -50,6 +71,21 @@ function chaveiro_servicos_section_customize($wp_customize)
             'image'    => 'Imagem',
         ],
     ]);
+
+    $wp_customize->add_setting('theme_servicos_heading_cores', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_servicos_heading_cores',
+        [
+            'label'       => 'Cores e fundo',
+            'description' => 'Defina cores principais, imagem de fundo, overlay e aparência dos cards.',
+            'section'     => 'servicos_section',
+            'settings'    => 'theme_servicos_heading_cores',
+        ]
+    ));
 
     $wp_customize->add_setting('servicos_section_bg_color', [
         'default' => '#0A2540',
@@ -85,8 +121,9 @@ function chaveiro_servicos_section_customize($wp_customize)
         $wp_customize,
         'servicos_section_bg_image',
         [
-            'label'   => 'Imagem de fundo',
-            'section' => 'servicos_section',
+            'label'       => 'Imagem de fundo',
+            'section'     => 'servicos_section',
+            'description' => 'Use uma imagem que combine com a seção de serviços.',
         ]
     ));
 
@@ -99,6 +136,9 @@ function chaveiro_servicos_section_customize($wp_customize)
         'description' => 'Exemplo: rgba(0,0,0,0.45)',
         'section'     => 'servicos_section',
         'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'rgba(0,0,0,0.45)',
+        ],
     ]);
 
     $wp_customize->add_setting('servicos_section_text_color', [

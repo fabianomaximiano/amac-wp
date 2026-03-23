@@ -9,6 +9,21 @@ function chaveiro_sobre_customize($wp_customize)
         'title' => 'Seção Sobre'
     ]);
 
+    $wp_customize->add_setting('theme_sobre_heading_conteudo', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_sobre_heading_conteudo',
+        [
+            'label'       => 'Conteúdo da seção',
+            'description' => 'Configure ativação, imagem, formato e textos principais da seção Sobre.',
+            'section'     => 'sobre',
+            'settings'    => 'theme_sobre_heading_conteudo',
+        ]
+    ));
+
     $wp_customize->add_setting('sobre_ativo', [
         'default' => true
     ]);
@@ -48,21 +63,32 @@ function chaveiro_sobre_customize($wp_customize)
 
     $wp_customize->add_setting('sobre_titulo');
     $wp_customize->add_control('sobre_titulo', [
-        'label'   => 'Título',
-        'section' => 'sobre'
+        'label'       => 'Título',
+        'section'     => 'sobre',
+        'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'Ex.: Atendimento com experiência e confiança',
+        ],
     ]);
 
     $wp_customize->add_setting('sobre_subtitulo');
     $wp_customize->add_control('sobre_subtitulo', [
-        'label'   => 'Subtítulo',
-        'section' => 'sobre'
+        'label'       => 'Subtítulo',
+        'section'     => 'sobre',
+        'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'Ex.: Profissional pronto para emergências e serviços agendados',
+        ],
     ]);
 
     $wp_customize->add_setting('sobre_desc');
     $wp_customize->add_control('sobre_desc', [
-        'label'   => 'Descrição',
-        'section' => 'sobre',
-        'type'    => 'textarea'
+        'label'       => 'Descrição',
+        'section'     => 'sobre',
+        'type'        => 'textarea',
+        'input_attrs' => [
+            'placeholder' => 'Descreva experiência, diferenciais, área de atuação e mensagem institucional da seção Sobre.',
+        ],
     ]);
 }
 add_action('customize_register', 'chaveiro_sobre_customize');

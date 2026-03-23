@@ -456,10 +456,10 @@ function theme_customize_footer($wp_customize)
     ));
 
     $wp_customize->add_control('footer_social_icon_style', array(
-        'label'       => __('Estilo dos ícones sociais', 'amac-wp'),
-        'section'     => 'theme_footer_section',
-        'type'        => 'select',
-        'choices'     => array(
+        'label'   => __('Estilo dos ícones sociais', 'amac-wp'),
+        'section' => 'theme_footer_section',
+        'type'    => 'select',
+        'choices' => array(
             'none'           => __('Somente ícone', 'amac-wp'),
             'circle'         => __('Círculo', 'amac-wp'),
             'square'         => __('Quadrado', 'amac-wp'),
@@ -585,121 +585,167 @@ function theme_footer_customizer_styles()
     ?>
     <style>
         #sub-accordion-section-theme_footer_section {
-            background: #f6f7f7;
+            background: #f3f4f6;
+            padding: 0 6px 8px;
+            box-sizing: border-box;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control {
-            margin-bottom: 8px;
-            padding: 8px;
+            margin-bottom: 5px;
+            padding: 7px 8px;
             background: #ffffff;
-            border: 1px solid #dcdcde;
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+            border: 1px solid #d9dadd;
+            border-radius: 7px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.018);
+            box-sizing: border-box;
+        }
+
+        #sub-accordion-section-theme_footer_section .customize-control:last-child {
+            margin-bottom: 0;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control label {
             display: block;
-            margin-bottom: 3px;
+            margin-bottom: 1px;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control-title {
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 600;
             color: #1d2327;
-            margin-bottom: 4px;
-            line-height: 1.25;
+            margin-bottom: 2px;
+            line-height: 1.22;
         }
 
         #sub-accordion-section-theme_footer_section .description {
-            margin-top: 4px;
+            margin-top: 2px;
             color: #646970;
             font-style: normal;
-            font-size: 10.5px;
-            line-height: 1.35;
+            font-size: 10px;
+            line-height: 1.28;
+        }
+
+        #sub-accordion-section-theme_footer_section .customize-control-checkbox {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        #sub-accordion-section-theme_footer_section .customize-control-checkbox label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin: 0;
+            font-size: 11.5px;
+            font-weight: 500;
+            color: #1d2327;
+        }
+
+        #sub-accordion-section-theme_footer_section .customize-control-checkbox input[type="checkbox"] {
+            margin: 0;
         }
 
         #sub-accordion-section-theme_footer_section input[type="text"],
         #sub-accordion-section-theme_footer_section input[type="email"],
+        #sub-accordion-section-theme_footer_section input[type="url"],
+        #sub-accordion-section-theme_footer_section input[type="number"],
         #sub-accordion-section-theme_footer_section textarea,
         #sub-accordion-section-theme_footer_section select {
-            width: 100%;
+            width: 92%;
+            margin: 0 auto;
+            display: block;
             min-height: 32px;
             border-radius: 6px;
             border: 1px solid #c3c4c7;
-            padding: 6px 8px;
+            padding: 5px 8px;
             box-sizing: border-box;
             background: #fff;
             transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
-            font-size: 12px;
-            line-height: 1.25;
+            font-size: 11.5px;
+            line-height: 1.28;
         }
 
         #sub-accordion-section-theme_footer_section textarea {
-            min-height: 70px;
+            min-height: 72px;
             resize: vertical;
         }
 
         #sub-accordion-section-theme_footer_section input[type="text"]:focus,
         #sub-accordion-section-theme_footer_section input[type="email"]:focus,
+        #sub-accordion-section-theme_footer_section input[type="url"]:focus,
+        #sub-accordion-section-theme_footer_section input[type="number"]:focus,
         #sub-accordion-section-theme_footer_section textarea:focus,
         #sub-accordion-section-theme_footer_section select:focus {
             border-color: #2271b1;
             box-shadow: 0 0 0 1px #2271b1;
             outline: 0;
+            background: #fff;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control-theme_section_title {
             padding: 0;
-            margin: 14px 0 6px;
+            margin: 10px 0 4px;
             background: transparent;
             border: 0;
             box-shadow: none;
         }
 
         #sub-accordion-section-theme_footer_section .customize-control-theme_section_title:first-of-type {
-            margin-top: 4px;
+            margin-top: 1px;
+        }
+
+        #sub-accordion-section-theme_footer_section .wp-picker-container {
+            display: block;
+        }
+
+        #sub-accordion-section-theme_footer_section .wp-picker-container .wp-color-result.button {
+            width: 92%;
+            height: 32px;
+            min-height: 32px;
+            border-radius: 6px;
+            margin: 0 auto 5px;
+            display: block;
+            box-sizing: border-box;
+        }
+
+        #sub-accordion-section-theme_footer_section .wp-picker-container .wp-color-result-text {
+            line-height: 30px;
+            font-size: 10.5px;
+        }
+
+        #sub-accordion-section-theme_footer_section .wp-picker-holder {
+            margin-top: 3px;
+            margin-left: 4%;
+        }
+
+        #sub-accordion-section-theme_footer_section .customize-control .customize-control-notifications-container {
+            margin-bottom: 3px;
         }
 
         .theme-customizer-group-title {
-            padding: 0 1px;
+            padding: 0 1px 1px;
         }
 
         .theme-customizer-group-title-text {
             display: block;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 700;
             color: #1d2327;
-            margin-bottom: 2px;
-            line-height: 1.2;
+            margin-bottom: 1px;
+            line-height: 1.16;
         }
 
         .theme-customizer-group-description {
             display: block;
             color: #646970;
-            font-size: 10.5px;
-            line-height: 1.3;
+            font-size: 9.8px;
+            line-height: 1.26;
         }
 
         .theme-cep-status {
-            margin-top: 4px;
-            font-size: 10.5px;
-            line-height: 1.3;
-        }
-
-        #sub-accordion-section-theme_footer_section .wp-picker-container .wp-color-result.button {
-            height: 28px;
-            min-height: 28px;
-            border-radius: 6px;
-            margin: 0;
-        }
-
-        #sub-accordion-section-theme_footer_section .wp-picker-container .wp-color-result-text {
-            line-height: 26px;
-            font-size: 11px;
-        }
-
-        #sub-accordion-section-theme_footer_section .customize-control .customize-control-notifications-container {
-            margin-bottom: 4px;
+            width: 92%;
+            margin: 4px auto 0;
+            font-size: 9.8px;
+            line-height: 1.26;
         }
     </style>
     <?php

@@ -6,6 +6,21 @@ function chaveiro_hero_customize($wp_customize)
         'title' => 'Hero (Topo do Site)',
     ]);
 
+    $wp_customize->add_setting('theme_hero_heading_geral', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_hero_heading_geral',
+        [
+            'label'       => 'Configurações gerais',
+            'description' => 'Ative a seção e configure os slides do hero seguindo o mesmo padrão visual do rodapé.',
+            'section'     => 'hero_section',
+            'settings'    => 'theme_hero_heading_geral',
+        ]
+    ));
+
     $wp_customize->add_setting('hero_ativo', [
         'default' => true,
     ]);
@@ -17,6 +32,21 @@ function chaveiro_hero_customize($wp_customize)
     ]);
 
     for ($i = 1; $i <= 4; $i++) {
+        $wp_customize->add_setting("theme_hero_heading_slide_{$i}", [
+            'sanitize_callback' => 'sanitize_text_field',
+        ]);
+
+        $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+            $wp_customize,
+            "theme_hero_heading_slide_{$i}",
+            [
+                'label'       => "Slide {$i}",
+                'description' => 'Configure imagem, textos, link e aparência do botão deste slide.',
+                'section'     => 'hero_section',
+                'settings'    => "theme_hero_heading_slide_{$i}",
+            ]
+        ));
+
         $wp_customize->add_setting("hero_img_desktop_{$i}");
         $wp_customize->add_control(new WP_Customize_Image_Control(
             $wp_customize,
@@ -41,16 +71,22 @@ function chaveiro_hero_customize($wp_customize)
 
         $wp_customize->add_setting("hero_title_{$i}");
         $wp_customize->add_control("hero_title_{$i}", [
-            'label'   => "Título {$i}",
-            'section' => 'hero_section',
-            'type'    => 'text',
+            'label'       => "Título {$i}",
+            'section'     => 'hero_section',
+            'type'        => 'text',
+            'input_attrs' => [
+                'placeholder' => 'Ex.: Chaveiro 24h na sua região',
+            ],
         ]);
 
         $wp_customize->add_setting("hero_sub_{$i}");
         $wp_customize->add_control("hero_sub_{$i}", [
-            'label'   => "Subtítulo {$i}",
-            'section' => 'hero_section',
-            'type'    => 'text',
+            'label'       => "Subtítulo {$i}",
+            'section'     => 'hero_section',
+            'type'        => 'text',
+            'input_attrs' => [
+                'placeholder' => 'Ex.: Atendimento rápido, residencial, comercial e automotivo',
+            ],
         ]);
 
         $wp_customize->add_setting("hero_btn_text_{$i}", [
@@ -61,6 +97,9 @@ function chaveiro_hero_customize($wp_customize)
             'section'     => 'hero_section',
             'type'        => 'text',
             'description' => 'Texto do botão deste slide.',
+            'input_attrs' => [
+                'placeholder' => 'Ex.: Solicitar atendimento',
+            ],
         ]);
 
         $wp_customize->add_setting("hero_btn_link_{$i}", [
@@ -71,6 +110,9 @@ function chaveiro_hero_customize($wp_customize)
             'section'     => 'hero_section',
             'type'        => 'url',
             'description' => 'Link do botão deste slide. Pode ser WhatsApp, telefone, formulário ou outra URL.',
+            'input_attrs' => [
+                'placeholder' => 'https://...',
+            ],
         ]);
 
         $wp_customize->add_setting("hero_btn_color_{$i}", [

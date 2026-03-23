@@ -6,14 +6,32 @@ function chaveiro_faq_customize($wp_customize)
         'title' => 'FAQ',
     ]);
 
+    $wp_customize->add_setting('theme_faq_heading_geral', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_faq_heading_geral',
+        [
+            'label'       => 'Configurações gerais',
+            'description' => 'Defina o título, ícones e comportamento geral da seção FAQ.',
+            'section'     => 'faq',
+            'settings'    => 'theme_faq_heading_geral',
+        ]
+    ));
+
     $wp_customize->add_setting('faq_titulo', [
         'default' => 'Perguntas Frequentes',
     ]);
 
     $wp_customize->add_control('faq_titulo', [
-        'label'   => 'Título da seção FAQ',
-        'section' => 'faq',
-        'type'    => 'text',
+        'label'       => 'Título da seção FAQ',
+        'section'     => 'faq',
+        'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'Ex.: Perguntas Frequentes',
+        ],
     ]);
 
     $wp_customize->add_setting('faq_exibir_icone_titulo', [
@@ -35,6 +53,9 @@ function chaveiro_faq_customize($wp_customize)
         'description' => 'Exemplo: fa-solid fa-circle-question',
         'section'     => 'faq',
         'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'fa-solid fa-circle-question',
+        ],
     ]);
 
     $wp_customize->add_setting('faq_exibir_icones', [
@@ -56,7 +77,25 @@ function chaveiro_faq_customize($wp_customize)
         'description' => 'Exemplo: fa-solid fa-key',
         'section'     => 'faq',
         'type'        => 'text',
+        'input_attrs' => [
+            'placeholder' => 'fa-solid fa-key',
+        ],
     ]);
+
+    $wp_customize->add_setting('theme_faq_heading_cores', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_faq_heading_cores',
+        [
+            'label'       => 'Cores da seção',
+            'description' => 'Personalize fundo, título, perguntas, respostas e ícones.',
+            'section'     => 'faq',
+            'settings'    => 'theme_faq_heading_cores',
+        ]
+    ));
 
     $wp_customize->add_setting('faq_bg_section', [
         'default' => '#f8f9fa',
@@ -162,19 +201,40 @@ function chaveiro_faq_customize($wp_customize)
         ]
     ));
 
+    $wp_customize->add_setting('theme_faq_heading_perguntas', [
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
+    $wp_customize->add_control(new Theme_Customizer_Section_Title_Control(
+        $wp_customize,
+        'theme_faq_heading_perguntas',
+        [
+            'label'       => 'Perguntas e respostas',
+            'description' => 'Cadastre até 10 perguntas frequentes com suas respectivas respostas.',
+            'section'     => 'faq',
+            'settings'    => 'theme_faq_heading_perguntas',
+        ]
+    ));
+
     for ($i = 1; $i <= 10; $i++) {
         $wp_customize->add_setting("faq_pergunta_$i");
         $wp_customize->add_control("faq_pergunta_$i", [
-            'label'   => "Pergunta $i",
-            'section' => 'faq',
-            'type'    => 'text',
+            'label'       => "Pergunta $i",
+            'section'     => 'faq',
+            'type'        => 'text',
+            'input_attrs' => [
+                'placeholder' => "Ex.: Pergunta frequente {$i}",
+            ],
         ]);
 
         $wp_customize->add_setting("faq_resposta_$i");
         $wp_customize->add_control("faq_resposta_$i", [
-            'label'   => "Resposta $i",
-            'section' => 'faq',
-            'type'    => 'textarea',
+            'label'       => "Resposta $i",
+            'section'     => 'faq',
+            'type'        => 'textarea',
+            'input_attrs' => [
+                'placeholder' => "Digite aqui a resposta da pergunta {$i}.",
+            ],
         ]);
     }
 }
@@ -183,14 +243,14 @@ add_action('customize_register', 'chaveiro_faq_customize');
 
 function chaveiro_faq_custom_css()
 {
-    $faq_bg_section      = get_theme_mod('faq_bg_section', '#f8f9fa');
-    $faq_titulo_cor      = get_theme_mod('faq_titulo_cor', '#111111');
+    $faq_bg_section       = get_theme_mod('faq_bg_section', '#f8f9fa');
+    $faq_titulo_cor       = get_theme_mod('faq_titulo_cor', '#111111');
     $faq_icone_titulo_cor = get_theme_mod('faq_icone_titulo_cor', '#25D366');
-    $faq_pergunta_bg     = get_theme_mod('faq_pergunta_bg', '#ffffff');
-    $faq_pergunta_cor    = get_theme_mod('faq_pergunta_cor', '#222222');
-    $faq_resposta_bg     = get_theme_mod('faq_resposta_bg', '#ffffff');
-    $faq_resposta_cor    = get_theme_mod('faq_resposta_cor', '#444444');
-    $faq_icone_cor       = get_theme_mod('faq_icone_cor', '#25D366');
+    $faq_pergunta_bg      = get_theme_mod('faq_pergunta_bg', '#ffffff');
+    $faq_pergunta_cor     = get_theme_mod('faq_pergunta_cor', '#222222');
+    $faq_resposta_bg      = get_theme_mod('faq_resposta_bg', '#ffffff');
+    $faq_resposta_cor     = get_theme_mod('faq_resposta_cor', '#444444');
+    $faq_icone_cor        = get_theme_mod('faq_icone_cor', '#25D366');
     ?>
     <style id="chaveiro-faq-custom-css">
         .faq-section {
