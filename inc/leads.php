@@ -1,264 +1,283 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+use PHPMailer\PHPMailer\PHPMailer;
+use Dotenv\Dotenv;
+
 // ==============================
-// CRIAR / ATUALIZAR TABELA DE LEADS
+// HELPERS
 // ==============================
-function chaveiro_create_leads_table() {
-    global $wpdb;
+if (!function_exists('chaveiro_leads_log')) {
+    function chaveiro_leads_log($message)
+    {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[Chaveiro Leads] ' . $message);
+        }
+    }
+}
 
-    $table = $wpdb->prefix . 'chaveiro_leads';
-    $charset_collate = $wpdb->get_charset_collate();
+if (!function_exists('chaveiro_get_env_value')) {
+    function chaveiro_get_env_value($key, $default = '')
+    {
+        if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+            return $_ENV[$key];
+        }
 
-    $sql = "CREATE TABLE $table (
-        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-        nome VARCHAR(150) NOT NULL,
-        telefone VARCHAR(30) NOT NULL,
-        tipo_servico VARCHAR(120) DEFAULT '',
-        cep VARCHAR(12) DEFAULT '',
-        cidade VARCHAR(120) DEFAULT '',
-        bairro VARCHAR(120) DEFAULT '',
-        urgencia VARCHAR(50) DEFAULT '',
-        mensagem TEXT,
-        origem VARCHAR(50) DEFAULT 'formulario',
-        url_origem TEXT,
-        status VARCHAR(20) DEFAULT 'novo',
-        cliente_id BIGINT UNSIGNED DEFAULT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id)
-    ) $charset_collate;";
+        $value = getenv($key);
+        if ($value !== false && $value !== '') {
+            return $value;
+        }
 
-    require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-    dbDelta($sql);
+        return $default;
+    }
+}
+
+if (!function_exists('chaveiro_get_whatsapp_base_link')) {
+    function chaveiro_get_whatsapp_base_link()
+    {
+        $hero_link = trim((string) get_theme_mod('hero_whatsapp_link', ''));
+        $numero    = trim((string) get_theme_mod('whatsapp_numero', ''));
+
+        if (!empty($hero_link)) {
+            return $hero_link;
+        }
+
+        if (!empty($numero)) {
+            $numero_limpo = preg_replace('/\D+/', '', $numero);
+
+            if (!empty($numero_limpo)) {
+                return 'https://wa.me/' . $numero_limpo;
+            }
+        }
+
+        return 'https://wa.me/5511999999999';
+    }
+}
+
+// ==============================
+// CARREGAR AUTOLOAD E .ENV
+// ==============================
+if (!function_exists('chaveiro_inicializar_dependencias')) {
+    function chaveiro_inicializar_dependencias()
+    {
+        $autoload_path = get_template_directory() . '/vendor/autoload.php';
+
+        if (!file_exists($autoload_path)) {
+            chaveiro_leads_log('Autoload não encontrado em: ' . $autoload_path);
+            return;
+        }
+
+        require_once $autoload_path;
+
+        if (!class_exists('\Dotenv\Dotenv')) {
+            chaveiro_leads_log('Classe Dotenv não encontrada após autoload.');
+            return;
+        }
+
+        $paths = array(
+            ABSPATH,
+            get_template_directory(),
+        );
+
+        foreach ($paths as $path) {
+            $env_file = trailingslashit($path) . '.env';
+
+            if (!file_exists($env_file)) {
+                continue;
+            }
+
+            try {
+                $dotenv = Dotenv::createImmutable($path);
+                $dotenv->safeLoad();
+                chaveiro_leads_log('.env carregado em: ' . $env_file);
+                break;
+            } catch (\Throwable $e) {
+                chaveiro_leads_log('Erro ao carregar .env: ' . $e->getMessage());
+            }
+        }
+    }
+}
+add_action('after_setup_theme', 'chaveiro_inicializar_dependencias');
+
+// ==============================
+// TABELA DE LEADS
+// ==============================
+if (!function_exists('chaveiro_create_leads_table')) {
+    function chaveiro_create_leads_table()
+    {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'chaveiro_leads';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE {$table} (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            nome VARCHAR(150) NOT NULL,
+            telefone VARCHAR(30) NOT NULL,
+            tipo_servico VARCHAR(120) DEFAULT '',
+            cep VARCHAR(12) DEFAULT '',
+            cidade VARCHAR(120) DEFAULT '',
+            bairro VARCHAR(120) DEFAULT '',
+            urgencia VARCHAR(50) DEFAULT '',
+            mensagem TEXT,
+            origem VARCHAR(50) DEFAULT 'formulario',
+            url_origem TEXT,
+            status VARCHAR(20) DEFAULT 'novo',
+            cliente_id BIGINT UNSIGNED DEFAULT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id)
+        ) {$charset_collate};";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
+    }
 }
 add_action('after_switch_theme', 'chaveiro_create_leads_table');
 add_action('init', 'chaveiro_create_leads_table');
 
-
 // ==============================
-// SALVAR LEAD (AJAX)
+// SALVAR LEAD
 // ==============================
-function salvar_lead() {
-    global $wpdb;
+if (!function_exists('salvar_lead')) {
+    function salvar_lead()
+    {
+        global $wpdb;
 
-    $nome         = isset($_POST['nome']) ? sanitize_text_field(wp_unslash($_POST['nome'])) : '';
-    $telefone     = isset($_POST['telefone']) ? sanitize_text_field(wp_unslash($_POST['telefone'])) : '';
-    $tipo_servico = isset($_POST['tipo_servico']) ? sanitize_text_field(wp_unslash($_POST['tipo_servico'])) : '';
-    $cep          = isset($_POST['cep']) ? sanitize_text_field(wp_unslash($_POST['cep'])) : '';
-    $cidade       = isset($_POST['cidade']) ? sanitize_text_field(wp_unslash($_POST['cidade'])) : '';
-    $bairro       = isset($_POST['bairro']) ? sanitize_text_field(wp_unslash($_POST['bairro'])) : '';
-    $urgencia     = isset($_POST['urgencia']) ? sanitize_text_field(wp_unslash($_POST['urgencia'])) : '';
-    $mensagem     = isset($_POST['mensagem']) ? sanitize_textarea_field(wp_unslash($_POST['mensagem'])) : '';
-    $origem       = isset($_POST['origem']) ? sanitize_text_field(wp_unslash($_POST['origem'])) : 'formulario';
-    $url_origem   = isset($_POST['url_origem']) ? esc_url_raw(wp_unslash($_POST['url_origem'])) : '';
+        $nome         = isset($_POST['nome']) ? sanitize_text_field(wp_unslash($_POST['nome'])) : '';
+        $telefone     = isset($_POST['telefone']) ? sanitize_text_field(wp_unslash($_POST['telefone'])) : '';
+        $tipo_servico = isset($_POST['tipo_servico']) ? sanitize_text_field(wp_unslash($_POST['tipo_servico'])) : '';
+        $cep          = isset($_POST['cep']) ? sanitize_text_field(wp_unslash($_POST['cep'])) : '';
+        $cidade       = isset($_POST['cidade']) ? sanitize_text_field(wp_unslash($_POST['cidade'])) : '';
+        $bairro       = isset($_POST['bairro']) ? sanitize_text_field(wp_unslash($_POST['bairro'])) : '';
+        $urgencia     = isset($_POST['urgencia']) ? sanitize_text_field(wp_unslash($_POST['urgencia'])) : '';
+        $mensagem     = isset($_POST['mensagem']) ? sanitize_textarea_field(wp_unslash($_POST['mensagem'])) : '';
+        $origem       = isset($_POST['origem']) ? sanitize_text_field(wp_unslash($_POST['origem'])) : 'formulario';
+        $url_origem   = isset($_POST['url_origem']) ? esc_url_raw(wp_unslash($_POST['url_origem'])) : '';
 
-    if (empty($nome) || empty($telefone) || empty($tipo_servico) || empty($cep) || empty($cidade) || empty($bairro) || empty($urgencia)) {
-        wp_send_json_error([
-            'msg' => 'Preencha os campos obrigatórios antes de enviar.'
-        ]);
+        if (empty($nome) || empty($telefone) || empty($cidade)) {
+            wp_send_json_error(array(
+                'msg' => 'Preencha os campos obrigatórios: nome, telefone e cidade.'
+            ));
+        }
+
+        $inserted = $wpdb->insert(
+            $wpdb->prefix . 'chaveiro_leads',
+            array(
+                'nome'         => $nome,
+                'telefone'     => $telefone,
+                'tipo_servico' => $tipo_servico,
+                'cep'          => $cep,
+                'cidade'       => $cidade,
+                'bairro'       => $bairro,
+                'urgencia'     => $urgencia,
+                'mensagem'     => $mensagem,
+                'origem'       => $origem,
+                'url_origem'   => $url_origem,
+                'status'       => 'novo',
+            ),
+            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+        );
+
+        if (!$inserted) {
+            chaveiro_leads_log('Erro ao inserir lead: ' . $wpdb->last_error);
+
+            wp_send_json_error(array(
+                'msg' => 'Não foi possível salvar sua solicitação agora. Tente novamente.'
+            ));
+        }
+
+        $email_enviado = false;
+        $erro_email = '';
+
+        if (!class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
+            chaveiro_leads_log('PHPMailer não disponível.');
+        } else {
+            try {
+                $mail = new PHPMailer(true);
+
+                $smtp_host     = chaveiro_get_env_value('SMTP_HOST', 'smtp.titan.email');
+                $smtp_port     = (int) chaveiro_get_env_value('SMTP_PORT', 465);
+                $smtp_username = chaveiro_get_env_value('SMTP_USERNAME', '');
+                $smtp_password = chaveiro_get_env_value('SMTP_PASSWORD', '');
+                $smtp_secure   = strtolower((string) chaveiro_get_env_value('SMTP_SECURE', 'ssl'));
+
+                $from_email = chaveiro_get_env_value('SMTP_FROM_EMAIL', $smtp_username);
+                $from_name  = chaveiro_get_env_value('SMTP_FROM_NAME', 'Despachante Digital Flow');
+                $to_email   = chaveiro_get_env_value('LEAD_RECEIVER_EMAIL', '');
+
+                if (empty($smtp_username) || empty($smtp_password) || empty($to_email)) {
+                    throw new \Exception('Credenciais SMTP incompletas no .env.');
+                }
+
+                $mail->isSMTP();
+                $mail->Host       = $smtp_host;
+                $mail->SMTPAuth   = true;
+                $mail->Username   = $smtp_username;
+                $mail->Password   = $smtp_password;
+                $mail->Port       = $smtp_port;
+                $mail->CharSet    = 'UTF-8';
+
+                if ($smtp_secure === 'tls' || $smtp_port === 587) {
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                } else {
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                }
+
+                $mail->setFrom($from_email, $from_name);
+                $mail->addAddress($to_email);
+
+                $mail->isHTML(true);
+                $mail->Subject = 'Novo Lead: ' . $nome . ' - ' . $tipo_servico;
+
+                $body  = '<h2>Solicitação de Atendimento</h2>';
+                $body .= '<p><strong>Nome:</strong> ' . esc_html($nome) . '</p>';
+                $body .= '<p><strong>Telefone:</strong> ' . esc_html($telefone) . '</p>';
+                $body .= '<p><strong>Serviço:</strong> ' . esc_html($tipo_servico) . '</p>';
+                $body .= '<p><strong>CEP:</strong> ' . esc_html($cep) . '</p>';
+                $body .= '<p><strong>Cidade:</strong> ' . esc_html($cidade) . '</p>';
+                $body .= '<p><strong>Bairro:</strong> ' . esc_html($bairro) . '</p>';
+                $body .= '<p><strong>Urgência:</strong> ' . esc_html($urgencia) . '</p>';
+                $body .= '<p><strong>Mensagem:</strong><br>' . nl2br(esc_html($mensagem)) . '</p>';
+                $body .= '<hr>';
+                $body .= '<p><strong>Origem:</strong> ' . esc_html($origem) . '</p>';
+                $body .= '<p><strong>URL:</strong> ' . esc_html($url_origem) . '</p>';
+
+                $mail->Body    = $body;
+                $mail->AltBody = wp_strip_all_tags(
+                    "Solicitação de Atendimento\n" .
+                    "Nome: {$nome}\n" .
+                    "Telefone: {$telefone}\n" .
+                    "Serviço: {$tipo_servico}\n" .
+                    "CEP: {$cep}\n" .
+                    "Cidade: {$cidade}\n" .
+                    "Bairro: {$bairro}\n" .
+                    "Urgência: {$urgencia}\n" .
+                    "Mensagem: {$mensagem}\n" .
+                    "Origem: {$origem}\n" .
+                    "URL: {$url_origem}"
+                );
+
+                $mail->send();
+                $email_enviado = true;
+            } catch (\Throwable $e) {
+                $erro_email = $e->getMessage();
+                chaveiro_leads_log('Erro no envio: ' . $erro_email);
+            }
+        }
+
+        $mensagem_retorno = $email_enviado
+            ? 'Solicitação enviada com sucesso. Nossa equipe recebeu seu atendimento.'
+            : 'Solicitação registrada com sucesso. No momento o e-mail automático falhou, mas seu pedido foi salvo.';
+
+        wp_send_json_success(array(
+            'msg'           => $mensagem_retorno,
+            'email_enviado' => $email_enviado,
+            'debug'         => (defined('WP_DEBUG') && WP_DEBUG) ? $erro_email : ''
+        ));
     }
-
-    $wpdb->insert(
-        $wpdb->prefix . 'chaveiro_leads',
-        [
-            'nome'         => $nome,
-            'telefone'     => $telefone,
-            'tipo_servico' => $tipo_servico,
-            'cep'          => $cep,
-            'cidade'       => $cidade,
-            'bairro'       => $bairro,
-            'urgencia'     => $urgencia,
-            'mensagem'     => $mensagem,
-            'origem'       => $origem,
-            'url_origem'   => $url_origem,
-            'status'       => 'novo'
-        ],
-        [
-            '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s'
-        ]
-    );
-
-    $numero = get_theme_mod('whatsapp_numero', '');
-    $numero = preg_replace('/\D+/', '', $numero);
-
-    $texto_whatsapp = "Olá, meu nome é {$nome}. "
-        . "Preciso de {$tipo_servico}. "
-        . "CEP: {$cep}. "
-        . "Cidade: {$cidade}. "
-        . "Bairro: {$bairro}. "
-        . "Urgência: {$urgencia}. ";
-
-    if (!empty($mensagem)) {
-        $texto_whatsapp .= "Detalhes: {$mensagem}";
-    }
-
-    $whatsapp_link = '';
-    if (!empty($numero)) {
-        $whatsapp_link = 'https://wa.me/' . $numero . '?text=' . rawurlencode($texto_whatsapp);
-    }
-
-    wp_send_json_success([
-        'msg'      => 'Lead enviado com sucesso.',
-        'whatsapp' => $whatsapp_link
-    ]);
 }
 add_action('wp_ajax_salvar_lead', 'salvar_lead');
 add_action('wp_ajax_nopriv_salvar_lead', 'salvar_lead');
-
-
-// ==============================
-// ATUALIZAR STATUS (AJAX)
-// ==============================
-function atualizar_status_lead() {
-    global $wpdb;
-
-    $id     = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    $status = isset($_POST['status']) ? sanitize_text_field(wp_unslash($_POST['status'])) : '';
-
-    if (!$id || empty($status)) {
-        wp_send_json_error('Dados inválidos.');
-    }
-
-    $wpdb->update(
-        $wpdb->prefix . 'chaveiro_leads',
-        ['status' => $status],
-        ['id' => $id],
-        ['%s'],
-        ['%d']
-    );
-
-    wp_send_json_success('Status atualizado');
-}
-add_action('wp_ajax_update_lead_status', 'atualizar_status_lead');
-
-
-// ==============================
-// LISTAGEM (CRM)
-// ==============================
-function chaveiro_leads_page() {
-    global $wpdb;
-
-    $status = isset($_GET['status']) ? sanitize_text_field(wp_unslash($_GET['status'])) : '';
-    $busca  = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
-
-    $query = "SELECT * FROM {$wpdb->prefix}chaveiro_leads WHERE 1=1";
-
-    if ($status) {
-        $query .= $wpdb->prepare(" AND status = %s", $status);
-    }
-
-    if ($busca) {
-        $like = '%' . $wpdb->esc_like($busca) . '%';
-        $query .= $wpdb->prepare(
-            " AND (nome LIKE %s OR telefone LIKE %s OR cidade LIKE %s OR bairro LIKE %s OR tipo_servico LIKE %s)",
-            $like,
-            $like,
-            $like,
-            $like,
-            $like
-        );
-    }
-
-    $leads = $wpdb->get_results($query . " ORDER BY created_at DESC");
-
-    echo "<div class='wrap'><h1>CRM - Leads</h1>";
-
-    echo "
-    <form method='get' style='margin:20px 0; display:flex; gap:10px; align-items:center; flex-wrap:wrap;'>
-        <input type='hidden' name='page' value='chaveiro_leads'>
-        <select name='status'>
-            <option value=''>Todos os status</option>
-            <option value='novo' " . selected($status, 'novo', false) . ">Novo</option>
-            <option value='contato' " . selected($status, 'contato', false) . ">Contato</option>
-            <option value='fechado' " . selected($status, 'fechado', false) . ">Fechado</option>
-        </select>
-        <input type='text' name='s' placeholder='Buscar por nome, telefone, cidade...' value='" . esc_attr($busca) . "'>
-        <button class='button'>Filtrar</button>
-    </form>";
-
-    echo "<table class='widefat striped'>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Telefone</th>
-                <th>Serviço</th>
-                <th>CEP</th>
-                <th>Cidade</th>
-                <th>Bairro</th>
-                <th>Urgência</th>
-                <th>Origem</th>
-                <th>Status</th>
-                <th>Data</th>
-            </tr>
-        </thead>
-        <tbody>";
-
-    if ($leads) {
-        foreach ($leads as $lead) {
-            echo "<tr>
-                <td>" . esc_html($lead->nome) . "</td>
-                <td>" . esc_html($lead->telefone) . "</td>
-                <td>" . esc_html($lead->tipo_servico) . "</td>
-                <td>" . esc_html($lead->cep) . "</td>
-                <td>" . esc_html($lead->cidade) . "</td>
-                <td>" . esc_html($lead->bairro) . "</td>
-                <td>" . esc_html($lead->urgencia) . "</td>
-                <td>" . esc_html($lead->origem) . "</td>
-                <td>
-                    <select class='status-change' data-id='" . esc_attr($lead->id) . "'>
-                        <option value='novo' " . selected($lead->status, 'novo', false) . ">novo</option>
-                        <option value='contato' " . selected($lead->status, 'contato', false) . ">contato</option>
-                        <option value='fechado' " . selected($lead->status, 'fechado', false) . ">fechado</option>
-                    </select>
-                </td>
-                <td>" . esc_html($lead->created_at) . "</td>
-            </tr>";
-        }
-    } else {
-        echo "<tr><td colspan='10'>Nenhum lead encontrado.</td></tr>";
-    }
-
-    echo "</tbody></table></div>";
-}
-
-
-// ==============================
-// KANBAN CRM
-// ==============================
-function chaveiro_kanban_page() {
-    global $wpdb;
-
-    $leads = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}chaveiro_leads ORDER BY created_at DESC");
-
-    $columns = [
-        'novo'    => [],
-        'contato' => [],
-        'fechado' => []
-    ];
-
-    foreach ($leads as $lead) {
-        $status = in_array($lead->status, ['novo', 'contato', 'fechado'], true) ? $lead->status : 'novo';
-        $columns[$status][] = $lead;
-    }
-
-    echo "<div class='wrap'><h1>Kanban CRM</h1>";
-    echo "<div class='kanban-board'>";
-
-    foreach ($columns as $status => $items) {
-        echo "<div class='kanban-column' data-status='" . esc_attr($status) . "'>";
-        echo "<h2>" . esc_html(ucfirst($status)) . "</h2>";
-
-        foreach ($items as $lead) {
-            echo "<div class='kanban-card' draggable='true' data-id='" . esc_attr($lead->id) . "'>
-                    <strong>" . esc_html($lead->nome) . "</strong><br>
-                    " . esc_html($lead->telefone) . "<br>
-                    <small>" . esc_html($lead->tipo_servico) . "</small><br>
-                    <small>" . esc_html($lead->cidade . ' / ' . $lead->bairro) . "</small><br>
-                    <small>Urgência: " . esc_html($lead->urgencia) . "</small>
-                  </div>";
-        }
-
-        echo "</div>";
-    }
-
-    echo "</div></div>";
-}

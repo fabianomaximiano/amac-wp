@@ -5,28 +5,30 @@ document.addEventListener("DOMContentLoaded", function () {
     var abrir = document.getElementById("abrirModal");
     var fechar = document.querySelector(".fechar");
 
+    function fecharModal() {
+        if (modal) {
+            modal.style.display = "none";
+            document.body.classList.remove("modal-open");
+        }
+    }
+
     if (abrir && modal && fechar) {
         abrir.addEventListener("click", function () {
             modal.style.display = "block";
             document.body.classList.add("modal-open");
         });
 
-        fechar.addEventListener("click", function () {
-            modal.style.display = "none";
-            document.body.classList.remove("modal-open");
-        });
+        fechar.addEventListener("click", fecharModal);
 
         window.addEventListener("click", function (e) {
             if (e.target === modal) {
-                modal.style.display = "none";
-                document.body.classList.remove("modal-open");
+                fecharModal();
             }
         });
 
         document.addEventListener("keydown", function (e) {
             if (e.key === "Escape" && modal.style.display === "block") {
-                modal.style.display = "none";
-                document.body.classList.remove("modal-open");
+                fecharModal();
             }
         });
     }
@@ -47,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // MÁSCARA CEP
+    // MÁSCARA CEP + AUTOPREENCHIMENTO
     document.querySelectorAll(".cep").forEach(function (input) {
         input.addEventListener("input", function () {
             this.value = this.value
@@ -61,26 +63,38 @@ document.addEventListener("DOMContentLoaded", function () {
             var cidadeInput = document.getElementById("lead_cidade");
             var bairroInput = document.getElementById("lead_bairro");
 
+            if (!cidadeInput || !bairroInput) {
+                return;
+            }
+
             if (cep.length !== 8) {
                 return;
             }
 
+            cidadeInput.value = "Carregando...";
+            bairroInput.value = "Carregando...";
+
             fetch("https://viacep.com.br/ws/" + cep + "/json/")
                 .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Falha ao consultar CEP.");
+                    }
                     return response.json();
                 })
                 .then(function (data) {
-                    if (!data.erro) {
-                        if (cidadeInput && !cidadeInput.value) {
-                            cidadeInput.value = data.localidade || "";
-                        }
-
-                        if (bairroInput && !bairroInput.value) {
-                            bairroInput.value = data.bairro || "";
-                        }
+                    if (data.erro) {
+                        cidadeInput.value = "";
+                        bairroInput.value = "";
+                        return;
                     }
+
+                    // Sempre atualiza ao informar novo CEP
+                    cidadeInput.value = data.localidade || "";
+                    bairroInput.value = data.bairro || "";
                 })
                 .catch(function () {
+                    cidadeInput.value = "";
+                    bairroInput.value = "";
                     console.log("Não foi possível consultar o CEP.");
                 });
         });
@@ -93,6 +107,20 @@ document.addEventListener("DOMContentLoaded", function () {
         form.addEventListener("submit", function (e) {
             e.preventDefault();
 
+            var msgBox = document.getElementById("msg");
+            var submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+            var textoOriginalBotao = submitBtn ? submitBtn.innerHTML : "";
+
+            if (msgBox) {
+                msgBox.className = "";
+                msgBox.innerHTML = "Enviando solicitação...";
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = "Enviando...";
+            }
+
             var formData = new FormData(this);
             formData.append("action", "salvar_lead");
 
@@ -100,28 +128,52 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 body: formData
             })
-            .then(function (res) {
-                return res.json();
-            })
-            .then(function (data) {
-                var msgBox = document.getElementById("msg");
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (!msgBox) {
+                        return;
+                    }
 
-                if (msgBox && data && data.data) {
-                    msgBox.innerHTML = data.data.msg || "Enviado com sucesso.";
-                }
+                    if (data && data.success && data.data) {
+                        msgBox.className = "form-message form-message-success";
 
-                if (data && data.success && data.data && data.data.whatsapp) {
-                    setTimeout(function () {
-                        window.open(data.data.whatsapp, "_blank");
-                    }, 800);
-                }
-            })
-            .catch(function () {
-                var msgBox = document.getElementById("msg");
-                if (msgBox) {
-                    msgBox.innerHTML = "Não foi possível enviar agora. Tente novamente.";
-                }
-            });
+                        var mensagem = data.data.msg || "Solicitação enviada com sucesso.";
+
+                        if (data.data.email_enviado) {
+                            mensagem += "<br><small>E-mail enviado com sucesso para o atendimento.</small>";
+                        } else {
+                            mensagem += "<br><small>Seu pedido foi salvo. O atendimento ainda pode seguir normalmente pelo site.</small>";
+                        }
+
+                        msgBox.innerHTML = mensagem;
+
+                        form.reset();
+
+                        var origemInputReset = document.getElementById("url_origem");
+                        if (origemInputReset) {
+                            origemInputReset.value = window.location.href;
+                        }
+                    } else {
+                        msgBox.className = "form-message form-message-error";
+                        msgBox.innerHTML = (data && data.data && data.data.msg)
+                            ? data.data.msg
+                            : "Não foi possível enviar sua solicitação. Tente novamente.";
+                    }
+                })
+                .catch(function () {
+                    if (msgBox) {
+                        msgBox.className = "form-message form-message-error";
+                        msgBox.innerHTML = "Não foi possível enviar agora. Verifique sua conexão e tente novamente.";
+                    }
+                })
+                .finally(function () {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = textoOriginalBotao;
+                    }
+                });
         });
     }
 
@@ -219,12 +271,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 body: formData
             })
-            .then(function (res) {
-                return res.json();
-            })
-            .then(function () {
-                location.reload();
-            });
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function () {
+                    location.reload();
+                });
         });
     });
 

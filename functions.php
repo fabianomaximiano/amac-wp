@@ -512,4 +512,75 @@ function chaveiro_custom_css_variables()
     </style>
     <?php
 }
-add_action('wp_head', 'chaveiro_custom_css_variables', 5);
+add_action('wp_head', 'chaveiro_custom_css_variables', 20);
+
+// ==============================
+// PRESETS DE CORES
+// ==============================
+function chaveiro_get_color_presets()
+{
+    return array(
+        'padrao' => array(
+            'azul_escuro'    => '#0A2540',
+            'azul_principal' => '#007BFF',
+            'azul_claro'     => '#00C6FF',
+            'verde_whatsapp' => '#25D366',
+        ),
+        'vermelho' => array(
+            'azul_escuro'    => '#3A0A0A',
+            'azul_principal' => '#FF3B3B',
+            'azul_claro'     => '#FF7B7B',
+            'verde_whatsapp' => '#25D366',
+        ),
+        'verde' => array(
+            'azul_escuro'    => '#0A3A2A',
+            'azul_principal' => '#28A745',
+            'azul_claro'     => '#5CD68D',
+            'verde_whatsapp' => '#25D366',
+        ),
+    );
+}
+
+function chaveiro_apply_preset()
+{
+    if (!current_user_can('edit_theme_options')) {
+        wp_send_json_error('Sem permissão.');
+    }
+
+    $preset  = isset($_POST['preset']) ? sanitize_text_field(wp_unslash($_POST['preset'])) : '';
+    $presets = chaveiro_get_color_presets();
+
+    if (!isset($presets[$preset])) {
+        wp_send_json_error('Preset inválido.');
+    }
+
+    foreach ($presets[$preset] as $key => $value) {
+        set_theme_mod($key, $value);
+    }
+
+    wp_send_json_success('Preset aplicado.');
+}
+add_action('wp_ajax_apply_preset', 'chaveiro_apply_preset');
+
+// ==============================
+// BASE MULTI-CLIENTE
+// ==============================
+function chaveiro_cliente_atual()
+{
+    if (isset($_GET['cliente'])) {
+        return sanitize_text_field(wp_unslash($_GET['cliente']));
+    }
+
+    return 'default';
+}
+
+// ==============================
+// SHORTCODE DA LANDING
+// ==============================
+function chaveiro_lp_shortcode()
+{
+    ob_start();
+    include get_template_directory() . '/index.php';
+    return ob_get_clean();
+}
+add_shortcode('lp_chaveiro', 'chaveiro_lp_shortcode');              
