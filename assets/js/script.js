@@ -88,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         return;
                     }
 
-                    // Sempre atualiza ao informar novo CEP
                     cidadeInput.value = data.localidade || "";
                     bairroInput.value = data.bairro || "";
                 })
@@ -128,8 +127,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 body: formData
             })
-                .then(function (res) {
-                    return res.json();
+                .then(async function (res) {
+                    var raw = await res.text();
+
+                    if (!res.ok) {
+                        throw new Error("HTTP " + res.status + " - " + raw);
+                    }
+
+                    try {
+                        return JSON.parse(raw);
+                    } catch (error) {
+                        throw new Error("Resposta inválida do servidor.");
+                    }
                 })
                 .then(function (data) {
                     if (!msgBox) {

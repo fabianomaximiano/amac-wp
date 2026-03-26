@@ -5,6 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 use Dotenv\Dotenv;
 
 // ==============================
@@ -32,28 +33,6 @@ if (!function_exists('chaveiro_get_env_value')) {
         }
 
         return $default;
-    }
-}
-
-if (!function_exists('chaveiro_get_whatsapp_base_link')) {
-    function chaveiro_get_whatsapp_base_link()
-    {
-        $hero_link = trim((string) get_theme_mod('hero_whatsapp_link', ''));
-        $numero    = trim((string) get_theme_mod('whatsapp_numero', ''));
-
-        if (!empty($hero_link)) {
-            return $hero_link;
-        }
-
-        if (!empty($numero)) {
-            $numero_limpo = preg_replace('/\D+/', '', $numero);
-
-            if (!empty($numero_limpo)) {
-                return 'https://wa.me/' . $numero_limpo;
-            }
-        }
-
-        return 'https://wa.me/5511999999999';
     }
 }
 
@@ -198,36 +177,29 @@ if (!function_exists('salvar_lead')) {
             try {
                 $mail = new PHPMailer(true);
 
-                $smtp_host     = chaveiro_get_env_value('SMTP_HOST', 'smtp.titan.email');
-                $smtp_port     = (int) chaveiro_get_env_value('SMTP_PORT', 465);
-                $smtp_username = chaveiro_get_env_value('SMTP_USERNAME', '');
-                $smtp_password = chaveiro_get_env_value('SMTP_PASSWORD', '');
-                $smtp_secure   = strtolower((string) chaveiro_get_env_value('SMTP_SECURE', 'ssl'));
-
-                $from_email = chaveiro_get_env_value('SMTP_FROM_EMAIL', $smtp_username);
-                $from_name  = chaveiro_get_env_value('SMTP_FROM_NAME', 'Despachante Digital Flow');
-                $to_email   = chaveiro_get_env_value('LEAD_RECEIVER_EMAIL', '');
-
-                if (empty($smtp_username) || empty($smtp_password) || empty($to_email)) {
-                    throw new \Exception('Credenciais SMTP incompletas no .env.');
-                }
-
+                // Mesmo padrão do teste validado
                 $mail->isSMTP();
-                $mail->Host       = $smtp_host;
+                $mail->Host       = chaveiro_get_env_value('SMTP_HOST', 'smtp.titan.email');
                 $mail->SMTPAuth   = true;
-                $mail->Username   = $smtp_username;
-                $mail->Password   = $smtp_password;
-                $mail->Port       = $smtp_port;
+                $mail->Username   = chaveiro_get_env_value('SMTP_USERNAME', 'contato@fabianomaximiano.com.br');
+                $mail->Password   = chaveiro_get_env_value('SMTP_PASSWORD', '');
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port       = 465;
                 $mail->CharSet    = 'UTF-8';
 
-                if ($smtp_secure === 'tls' || $smtp_port === 587) {
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                } else {
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                // Ative só para testar e depois volte para 0/comentado
+                // $mail->SMTPDebug = 2;
+
+                $from_email = chaveiro_get_env_value('SMTP_FROM_EMAIL', 'contato@fabianomaximiano.com.br');
+                $from_name  = chaveiro_get_env_value('SMTP_FROM_NAME', 'Amac-Chaveiro e Acessórios');
+                $to_email   = chaveiro_get_env_value('LEAD_RECEIVER_EMAIL', 'biano@live.com');
+
+                if (empty($mail->Username) || empty($mail->Password) || empty($to_email)) {
+                    throw new Exception('Credenciais SMTP incompletas.');
                 }
 
                 $mail->setFrom($from_email, $from_name);
-                $mail->addAddress($to_email);
+                $mail->addAddress($to_email, 'Destinatário');
 
                 $mail->isHTML(true);
                 $mail->Subject = 'Novo Lead: ' . $nome . ' - ' . $tipo_servico;
@@ -246,7 +218,7 @@ if (!function_exists('salvar_lead')) {
                 $body .= '<p><strong>URL:</strong> ' . esc_html($url_origem) . '</p>';
 
                 $mail->Body    = $body;
-                $mail->AltBody = wp_strip_all_tags(
+                $mail->AltBody =
                     "Solicitação de Atendimento\n" .
                     "Nome: {$nome}\n" .
                     "Telefone: {$telefone}\n" .
@@ -257,19 +229,18 @@ if (!function_exists('salvar_lead')) {
                     "Urgência: {$urgencia}\n" .
                     "Mensagem: {$mensagem}\n" .
                     "Origem: {$origem}\n" .
-                    "URL: {$url_origem}"
-                );
+                    "URL: {$url_origem}";
 
                 $mail->send();
                 $email_enviado = true;
             } catch (\Throwable $e) {
                 $erro_email = $e->getMessage();
-                chaveiro_leads_log('Erro no envio: ' . $erro_email);
+                chaveiro_leads_log('Erro no envio do e-mail: ' . $erro_email);
             }
         }
 
         $mensagem_retorno = $email_enviado
-            ? 'Solicitação enviada com sucesso. Nossa equipe recebeu seu atendimento.'
+            ? 'Solicitação enviada com sucesso. Nossa equipe recebeu sua solicitação.'
             : 'Solicitação registrada com sucesso. No momento o e-mail automático falhou, mas seu pedido foi salvo.';
 
         wp_send_json_success(array(
