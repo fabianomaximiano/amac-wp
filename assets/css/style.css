@@ -81,8 +81,6 @@ TIPOGRAFIA GLOBAL
 SEÇÕES
 ============================== */
 
-.servicos-section,
-.servicos,
 .faq-section,
 .avaliacoes {
     position: relative;
@@ -120,7 +118,6 @@ SEÇÕES
 TÍTULOS PADRÃO
 ============================== */
 
-.servicos-section-title,
 .faq-section-title,
 .sobre h2,
 .avaliacoes h2,
@@ -132,7 +129,6 @@ TÍTULOS PADRÃO
     margin-bottom: 1.25rem;
 }
 
-.servicos-section-subtitle,
 .sobre-subtitulo,
 .avaliacoes-subtitulo,
 .faq-section-subtitle {
@@ -142,28 +138,9 @@ TÍTULOS PADRÃO
     margin-bottom: 2.5rem;
 }
 
-.servico-titulo,
-.card-servico h5,
-.servico-card h3 {
-    font-size: var(--card-title-size);
-    font-weight: var(--card-title-weight);
-    line-height: 1.25;
-    margin-bottom: 0.75rem;
-}
-
-.servico-subtitulo,
-.card-servico .servico-subtitulo {
-    font-size: var(--card-subtitle-size);
-    font-weight: var(--card-subtitle-weight);
-    line-height: 1.4;
-    margin-bottom: 0.75rem;
-}
-
 body,
 p,
 li,
-.servico-resumo,
-.card-servico p,
 .sobre p,
 .avaliacoes p,
 .faq-card .card-body {
@@ -172,16 +149,8 @@ li,
     line-height: 1.7;
 }
 
-.servicos-section-title,
-.servicos-section-subtitle,
 .avaliacoes h2 {
     text-align: center;
-}
-
-.servicos-section-subtitle {
-    max-width: 920px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .sobre h2,
@@ -704,200 +673,6 @@ WHATSAPP
 }
 
 /* ==============================
-SERVIÇOS
-============================== */
-
-.servicos-section {
-    position: relative;
-    overflow: hidden;
-    padding-top: calc(8rem + var(--header-offset));
-    padding-bottom: 8rem;
-}
-
-.hero-section + .servicos-section,
-.hero-section + section#servicos.servicos-section {
-    padding-top: 8rem;
-}
-
-.servicos-section-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-}
-
-.servicos-section .container {
-    position: relative;
-    z-index: 2;
-}
-
-.servicos-section-title {
-    margin-bottom: 1.5rem;
-}
-
-.servicos-section-subtitle {
-    max-width: 920px;
-    margin: 0 auto 5rem;
-    line-height: 1.75;
-    display: block;
-}
-
-.servicos-cards-row {
-    margin-top: 3.0rem;
-    justify-content: center;
-    align-items: stretch;
-}
-
-.servicos-section .col-lg-4,
-.servicos-section .col-md-6,
-.servicos-section .col-md-4 {
-    display: flex;
-    margin-bottom: 30px;
-}
-
-.servico-card {
-    width: 100%;
-    border-radius: 26px;
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 100%;
-    margin-top: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border: 0;
-}
-
-.servico-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 22px 42px rgba(0, 0, 0, 0.18);
-}
-
-.servico-card-topo {
-    position: relative;
-}
-
-.servico-card-topo-imagem {
-    min-height: 215px;
-    background: #7a0000;
-    overflow: hidden;
-}
-
-.servico-card-topo-imagem img {
-    width: 100%;
-    height: 215px;
-    object-fit: cover;
-    display: block;
-}
-
-.servico-card-topo-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.28) 100%);
-}
-
-.servico-card-topo-conteudo {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 1.75rem 1.5rem;
-    text-align: center;
-}
-
-.servico-card-imagem .servico-titulo,
-.servico-card-topo-imagem .servico-titulo {
-    color: #ffffff;
-    font-size: 2.05rem;
-    margin-bottom: 0.45rem;
-}
-
-.servico-card-imagem .servico-subtitulo,
-.servico-card-topo-imagem .servico-subtitulo {
-    color: #ffffff;
-    font-size: 1rem;
-    margin-bottom: 0;
-}
-
-.servico-card-topo-icone {
-    padding: 2rem 1.5rem 1rem;
-    text-align: center;
-}
-
-.servico-media-icon-circle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.25rem;
-}
-
-.servico-media-icon-circle-inner {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-    background: #f5a623;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 12px 24px rgba(245, 166, 35, 0.22);
-}
-
-.servico-media-icon-circle-inner i {
-    font-size: 3.25rem;
-    line-height: 1;
-    color: #ffffff;
-}
-
-.servico-card-topo-conteudo-icone {
-    position: static;
-    inset: auto;
-    display: block;
-    padding: 0;
-    text-align: center;
-}
-
-.servico-card-icone .servico-titulo,
-.servico-card-topo-icone .servico-titulo {
-    color: #111111;
-    font-size: 2rem;
-    margin-bottom: 0.45rem;
-}
-
-.servico-card-icone .servico-subtitulo,
-.servico-card-topo-icone .servico-subtitulo {
-    color: #111111;
-    font-size: 1rem;
-    margin-bottom: 0;
-}
-
-.servico-card-body {
-    height: 100%;
-    width: 100%;
-    padding: 1.15rem 2rem 2rem;
-    text-align: center;
-}
-
-.servico-resumo {
-    max-width: 100%;
-}
-
-.servico-resumo p {
-    margin-bottom: 0;
-    font-size: 1.02rem;
-    line-height: 1.75;
-}
-
-.servico-titulo {
-    margin-bottom: 0.75rem;
-}
-
-.servico-subtitulo {
-    margin-bottom: 0.9rem;
-}
-
-/* ==============================
 SOBRE
 ============================== */
 
@@ -1080,42 +855,6 @@ RESPONSIVO
         padding: 24px 20px 20px;
     }
 
-    .servicos-section {
-        padding-top: calc(6rem + var(--header-offset));
-        padding-bottom: 6rem;
-    }
-
-    .hero-section + .servicos-section,
-    .hero-section + section#servicos.servicos-section {
-        padding-top: 6rem;
-    }
-
-    .servicos-section-subtitle {
-        margin-bottom: 3.75rem;
-    }
-
-    .servicos-cards-row {
-        margin-top: 1rem;
-    }
-
-    .servico-card-topo-imagem,
-    .servico-card-topo-imagem img {
-        min-height: 190px;
-        height: 190px;
-    }
-
-    .servico-card-imagem .servico-titulo,
-    .servico-card-topo-imagem .servico-titulo,
-    .servico-card-icone .servico-titulo,
-    .servico-card-topo-icone .servico-titulo {
-        font-size: 1.7rem;
-    }
-
-    .servico-media-icon-circle-inner {
-        width: 112px;
-        height: 112px;
-    }
-
     .mapa,
     .cidade-intro,
     .cidade-servicos,
@@ -1210,50 +949,6 @@ RESPONSIVO
 
     .faq-section-title {
         gap: 6px;
-    }
-
-    .servicos-section {
-        padding-top: calc(5rem + var(--header-offset));
-        padding-bottom: 5rem;
-    }
-
-    .hero-section + .servicos-section,
-    .hero-section + section#servicos.servicos-section {
-        padding-top: 5rem;
-    }
-
-    .servicos-section-subtitle {
-        margin-bottom: 3rem;
-    }
-
-    .servicos-cards-row {
-        margin-top: 0.75rem;
-    }
-
-    .servico-card-topo-imagem,
-    .servico-card-topo-imagem img {
-        min-height: 175px;
-        height: 175px;
-    }
-
-    .servico-card-body {
-        padding: 1rem 1.4rem 1.6rem;
-    }
-
-    .servico-card-imagem .servico-titulo,
-    .servico-card-topo-imagem .servico-titulo,
-    .servico-card-icone .servico-titulo,
-    .servico-card-topo-icone .servico-titulo {
-        font-size: 1.45rem;
-    }
-
-    .servico-media-icon-circle-inner {
-        width: 96px;
-        height: 96px;
-    }
-
-    .servico-media-icon-circle-inner i {
-        font-size: 2.5rem;
     }
 
     .mapa,

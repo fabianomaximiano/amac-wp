@@ -276,6 +276,7 @@ function chaveiro_register_theme_image_sizes()
     add_image_size('hero_desktop', 1920, 900, true);
     add_image_size('hero_mobile', 768, 1100, true);
     add_image_size('sobre_quadrado', 400, 400, true);
+    add_image_size('servico_card', 900, 620, true);
 }
 add_action('after_setup_theme', 'chaveiro_register_theme_image_sizes');
 
@@ -407,6 +408,16 @@ function chaveiro_enqueue_assets()
             get_template_directory_uri() . '/assets/css/hero.css',
             array('chaveiro-style'),
             filemtime($hero_css_path)
+        );
+    }
+
+    $servicos_css_path = get_template_directory() . '/assets/css/servicos.css';
+    if (file_exists($servicos_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-servicos',
+            get_template_directory_uri() . '/assets/css/servicos.css',
+            array('chaveiro-style'),
+            filemtime($servicos_css_path)
         );
     }
 
@@ -583,4 +594,4 @@ function chaveiro_lp_shortcode()
     include get_template_directory() . '/index.php';
     return ob_get_clean();
 }
-add_shortcode('lp_chaveiro', 'chaveiro_lp_shortcode');              
+add_shortcode('lp_chaveiro', 'chaveiro_lp_shortcode');
