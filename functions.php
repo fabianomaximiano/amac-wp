@@ -38,12 +38,14 @@ if (class_exists('WP_Customize_Control') && !class_exists('Theme_Customizer_Sect
 function chaveiro_customizer_panel_styles()
 {
     $sections = array(
+        'title_tagline',
         'menu_opcoes',
         'tipografia',
         'sobre',
         'hero_section',
         'faq',
         'servicos_section',
+        'produtos_section',
     );
     ?>
     <style>
@@ -59,16 +61,22 @@ function chaveiro_customizer_panel_styles()
         <?php foreach ($sections as $section_id) : ?>
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> {
             background: #f3f4f6;
-            padding: 0 6px 8px;
+            padding: 0 8px 10px;
+            box-sizing: border-box;
+        }
+
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .accordion-section-content {
+            padding: 0 4px;
             box-sizing: border-box;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control {
-            margin-bottom: 5px;
-            padding: 7px 8px;
+            width: 100%;
+            margin: 0 0 6px 0;
+            padding: 6px 7px;
             background: #ffffff;
             border: 1px solid #d9dadd;
-            border-radius: 7px;
+            border-radius: 8px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.018);
             box-sizing: border-box;
         }
@@ -84,19 +92,19 @@ function chaveiro_customizer_panel_styles()
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-title {
             display: block;
-            font-size: 11.5px;
+            font-size: 11.3px;
             font-weight: 600;
             color: #1d2327;
             margin-bottom: 2px;
-            line-height: 1.22;
+            line-height: 1.2;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .description {
             margin-top: 2px;
             color: #646970;
             font-style: normal;
-            font-size: 10px;
-            line-height: 1.28;
+            font-size: 9.9px;
+            line-height: 1.25;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-checkbox {
@@ -109,7 +117,7 @@ function chaveiro_customizer_panel_styles()
             align-items: center;
             gap: 7px;
             margin: 0;
-            font-size: 11.5px;
+            font-size: 11.3px;
             font-weight: 500;
             color: #1d2327;
         }
@@ -124,22 +132,23 @@ function chaveiro_customizer_panel_styles()
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> input[type="number"],
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> textarea,
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> select {
-            width: 92%;
+            width: 91%;
             margin: 0 auto;
             display: block;
-            min-height: 32px;
+            min-height: 31px;
             border-radius: 6px;
             border: 1px solid #c3c4c7;
             padding: 5px 8px;
             box-sizing: border-box;
             background: #fff;
             transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
-            font-size: 11.5px;
-            line-height: 1.28;
+            font-size: 11.3px;
+            line-height: 1.24;
+            text-align: left;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> textarea {
-            min-height: 72px;
+            min-height: 68px;
             resize: vertical;
         }
 
@@ -156,32 +165,35 @@ function chaveiro_customizer_panel_styles()
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-image .actions,
-        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-media .actions {
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-media .actions,
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-site_icon .actions {
             margin-top: 6px;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-image .button,
-        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-media .button {
-            width: 92%;
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-media .button,
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-site_icon .button {
+            width: 91%;
             margin: 0 auto;
             display: block;
             justify-content: center;
             min-height: 34px;
             border-radius: 6px;
-            font-size: 11.5px;
+            font-size: 11.3px;
             line-height: 32px;
             text-align: center;
             box-sizing: border-box;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .attachment-media-view {
-            width: 92%;
+            width: 91%;
             margin: 0 auto 5px;
             box-sizing: border-box;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .placeholder,
-        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .thumbnail-image img {
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .thumbnail-image img,
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .site-icon-preview img {
             border-radius: 6px;
         }
 
@@ -190,28 +202,29 @@ function chaveiro_customizer_panel_styles()
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .wp-picker-container .wp-color-result.button {
-            width: 92%;
-            height: 32px;
-            min-height: 32px;
+            width: 91%;
+            height: 31px;
+            min-height: 31px;
             border-radius: 6px;
-            margin: 0 auto 5px;
+            margin: 0 auto 4px;
             display: block;
             box-sizing: border-box;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .wp-picker-container .wp-color-result-text {
-            line-height: 30px;
-            font-size: 10.5px;
+            line-height: 29px;
+            font-size: 10.3px;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .wp-picker-holder {
-            margin-top: 3px;
-            margin-left: 4%;
+            margin-top: 2px;
+            margin-left: 4.5%;
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control-theme_section_title {
+            width: 100%;
+            margin: 9px 0 3px 0;
             padding: 0;
-            margin: 10px 0 4px;
             background: transparent;
             border: 0;
             box-shadow: none;
@@ -222,7 +235,12 @@ function chaveiro_customizer_panel_styles()
         }
 
         #sub-accordion-section-<?php echo esc_attr($section_id); ?> .customize-control .customize-control-notifications-container {
-            margin-bottom: 3px;
+            margin-bottom: 2px;
+        }
+
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .site-title,
+        #sub-accordion-section-<?php echo esc_attr($section_id); ?> .site-description {
+            margin-bottom: 0;
         }
         <?php endforeach; ?>
 
@@ -232,18 +250,18 @@ function chaveiro_customizer_panel_styles()
 
         .theme-customizer-group-title-text {
             display: block;
-            font-size: 12.5px;
+            font-size: 12.2px;
             font-weight: 700;
             color: #1d2327;
             margin-bottom: 1px;
-            line-height: 1.16;
+            line-height: 1.14;
         }
 
         .theme-customizer-group-description {
             display: block;
             color: #646970;
-            font-size: 9.8px;
-            line-height: 1.26;
+            font-size: 9.7px;
+            line-height: 1.23;
         }
     </style>
     <?php
@@ -258,6 +276,7 @@ require_once get_template_directory() . '/inc/menu.php';
 require_once get_template_directory() . '/inc/hero.php';
 require_once get_template_directory() . '/inc/admin-hero.php';
 require_once get_template_directory() . '/inc/servicos.php';
+require_once get_template_directory() . '/inc/produtos.php';
 require_once get_template_directory() . '/inc/sobre.php';
 require_once get_template_directory() . '/inc/faq.php';
 require_once get_template_directory() . '/inc/admin-faq.php';
@@ -277,6 +296,7 @@ function chaveiro_register_theme_image_sizes()
     add_image_size('hero_mobile', 768, 1100, true);
     add_image_size('sobre_quadrado', 400, 400, true);
     add_image_size('servico_card', 900, 620, true);
+    add_image_size('produto_card', 900, 620, true);
 }
 add_action('after_setup_theme', 'chaveiro_register_theme_image_sizes');
 
@@ -391,6 +411,16 @@ function chaveiro_enqueue_assets()
             : $theme_version
     );
 
+    $menu_css_path = get_template_directory() . '/assets/css/menu.css';
+    if (file_exists($menu_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-menu',
+            get_template_directory_uri() . '/assets/css/menu.css',
+            array('chaveiro-style'),
+            filemtime($menu_css_path)
+        );
+    }
+
     $assets_css_path = get_template_directory() . '/assets/css/style.css';
     if (file_exists($assets_css_path)) {
         wp_enqueue_style(
@@ -411,6 +441,16 @@ function chaveiro_enqueue_assets()
         );
     }
 
+    $sobre_css_path = get_template_directory() . '/assets/css/sobre.css';
+    if (file_exists($sobre_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-sobre',
+            get_template_directory_uri() . '/assets/css/sobre.css',
+            array('chaveiro-style'),
+            filemtime($sobre_css_path)
+        );
+    }
+
     $servicos_css_path = get_template_directory() . '/assets/css/servicos.css';
     if (file_exists($servicos_css_path)) {
         wp_enqueue_style(
@@ -418,6 +458,16 @@ function chaveiro_enqueue_assets()
             get_template_directory_uri() . '/assets/css/servicos.css',
             array('chaveiro-style'),
             filemtime($servicos_css_path)
+        );
+    }
+
+    $produtos_css_path = get_template_directory() . '/assets/css/produtos.css';
+    if (file_exists($produtos_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-produtos',
+            get_template_directory_uri() . '/assets/css/produtos.css',
+            array('chaveiro-style'),
+            filemtime($produtos_css_path)
         );
     }
 
@@ -438,6 +488,16 @@ function chaveiro_enqueue_assets()
             get_template_directory_uri() . '/assets/css/footer-config.css',
             array('chaveiro-style'),
             filemtime($footer_css_path)
+        );
+    }
+
+    $avaliacoes_css_path = get_template_directory() . '/assets/css/avaliacoes.css';
+    if (file_exists($avaliacoes_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-avaliacoes',
+            get_template_directory_uri() . '/assets/css/avaliacoes.css',
+            array('chaveiro-style'),
+            filemtime($avaliacoes_css_path)
         );
     }
 
@@ -523,7 +583,7 @@ function chaveiro_custom_css_variables()
     </style>
     <?php
 }
-add_action('wp_head', 'chaveiro_custom_css_variables', 20);
+add_action('wp_head', 'chaveiro_custom_css_variables', 5);
 
 // ==============================
 // PRESETS DE CORES

@@ -1,7 +1,7 @@
 <?php
 
-function chaveiro_menu_customize($wp_customize) {
-
+function chaveiro_menu_customize($wp_customize)
+{
     // ======================
     // MENU E IDENTIDADE
     // ======================
@@ -18,30 +18,40 @@ function chaveiro_menu_customize($wp_customize) {
         'theme_menu_heading_estrutura',
         [
             'label'       => 'Estrutura do menu',
-            'description' => 'Configure altura e comportamento do menu principal.',
+            'description' => 'Configure altura, comportamento e identidade principal do cabeçalho do site.',
             'section'     => 'menu_opcoes',
             'settings'    => 'theme_menu_heading_estrutura',
         ]
     ));
 
-    $wp_customize->add_setting('menu_altura', ['default' => 80]);
+    $wp_customize->add_setting('menu_altura', [
+        'default'           => 80,
+        'sanitize_callback' => 'absint',
+    ]);
+
     $wp_customize->add_control('menu_altura', [
         'label'       => 'Altura do Menu (px)',
         'section'     => 'menu_opcoes',
         'type'        => 'number',
         'input_attrs' => [
             'placeholder' => '80',
-            'min'         => 40,
+            'min'         => 50,
             'max'         => 180,
             'step'        => 1,
         ],
+        'description' => 'Defina a altura do cabeçalho principal em pixels.',
     ]);
 
-    $wp_customize->add_setting('menu_transparente', ['default' => true]);
+    $wp_customize->add_setting('menu_transparente', [
+        'default'           => true,
+        'sanitize_callback' => 'rest_sanitize_boolean',
+    ]);
+
     $wp_customize->add_control('menu_transparente', [
-        'label'   => 'Menu transparente no topo',
-        'section' => 'menu_opcoes',
-        'type'    => 'checkbox'
+        'label'       => 'Menu transparente no topo',
+        'section'     => 'menu_opcoes',
+        'type'        => 'checkbox',
+        'description' => 'Quando ativo, o menu começa transparente sobre o hero e recebe fundo ao rolar a página.',
     ]);
 
     $wp_customize->add_setting('theme_menu_heading_cores', [
@@ -53,49 +63,69 @@ function chaveiro_menu_customize($wp_customize) {
         'theme_menu_heading_cores',
         [
             'label'       => 'Cores do menu',
-            'description' => 'Defina as cores principais do fundo, texto e hover do menu.',
+            'description' => 'Defina fundo, texto e cor de destaque do menu principal.',
             'section'     => 'menu_opcoes',
             'settings'    => 'theme_menu_heading_cores',
         ]
     ));
 
-    $wp_customize->add_setting('menu_bg_color', ['default' => '#ffffff']);
+    $wp_customize->add_setting('menu_bg_color', [
+        'default'           => '#ffffff',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ]);
+
     $wp_customize->add_control(new WP_Customize_Color_Control(
         $wp_customize,
         'menu_bg_color',
         [
-            'label'   => 'Cor de fundo',
-            'section' => 'menu_opcoes'
+            'label'       => 'Cor de fundo',
+            'section'     => 'menu_opcoes',
+            'description' => 'Cor principal do fundo do menu.',
         ]
     ));
 
-    $wp_customize->add_setting('menu_bg_scroll', ['default' => '#ffffff']);
+    $wp_customize->add_setting('menu_bg_scroll', [
+        'default'           => '#ffffff',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ]);
+
     $wp_customize->add_control(new WP_Customize_Color_Control(
         $wp_customize,
         'menu_bg_scroll',
         [
-            'label'   => 'Cor do menu ao rolar',
-            'section' => 'menu_opcoes'
+            'label'       => 'Cor do menu ao rolar',
+            'section'     => 'menu_opcoes',
+            'description' => 'Cor aplicada quando o usuário rola a página.',
         ]
     ));
 
-    $wp_customize->add_setting('menu_text_color', ['default' => '#000000']);
+    $wp_customize->add_setting('menu_text_color', [
+        'default'           => '#111111',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ]);
+
     $wp_customize->add_control(new WP_Customize_Color_Control(
         $wp_customize,
         'menu_text_color',
         [
-            'label'   => 'Cor do texto',
-            'section' => 'menu_opcoes'
+            'label'       => 'Cor do texto',
+            'section'     => 'menu_opcoes',
+            'description' => 'Cor padrão dos links e textos do menu.',
         ]
     ));
 
-    $wp_customize->add_setting('menu_hover_color', ['default' => '#28a745']);
+    $wp_customize->add_setting('menu_hover_color', [
+        'default'           => '#28a745',
+        'sanitize_callback' => 'sanitize_hex_color',
+    ]);
+
     $wp_customize->add_control(new WP_Customize_Color_Control(
         $wp_customize,
         'menu_hover_color',
         [
-            'label'   => 'Cor hover',
-            'section' => 'menu_opcoes'
+            'label'       => 'Cor hover',
+            'section'     => 'menu_opcoes',
+            'description' => 'Cor de destaque ao passar o mouse ou ao marcar item ativo.',
         ]
     ));
 
@@ -107,14 +137,18 @@ function chaveiro_menu_customize($wp_customize) {
         $wp_customize,
         'theme_menu_heading_whatsapp',
         [
-            'label'       => 'WhatsApp',
-            'description' => 'Defina o número principal e se o canal deve ficar ativo no tema.',
+            'label'       => 'CTA e WhatsApp',
+            'description' => 'Defina o número principal de atendimento e o comportamento do canal no cabeçalho.',
             'section'     => 'menu_opcoes',
             'settings'    => 'theme_menu_heading_whatsapp',
         ]
     ));
 
-    $wp_customize->add_setting('whatsapp_numero');
+    $wp_customize->add_setting('whatsapp_numero', [
+        'default'           => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('whatsapp_numero', [
         'label'       => 'WhatsApp',
         'section'     => 'menu_opcoes',
@@ -122,13 +156,19 @@ function chaveiro_menu_customize($wp_customize) {
         'input_attrs' => [
             'placeholder' => 'Ex.: 5511999999999',
         ],
+        'description' => 'Informe no formato internacional, somente números.',
     ]);
 
-    $wp_customize->add_setting('whatsapp_ativo', ['default' => true]);
+    $wp_customize->add_setting('whatsapp_ativo', [
+        'default'           => true,
+        'sanitize_callback' => 'rest_sanitize_boolean',
+    ]);
+
     $wp_customize->add_control('whatsapp_ativo', [
-        'label'   => 'Ativar WhatsApp',
-        'section' => 'menu_opcoes',
-        'type'    => 'checkbox'
+        'label'       => 'Ativar WhatsApp',
+        'section'     => 'menu_opcoes',
+        'type'        => 'checkbox',
+        'description' => 'Exibe os atalhos de WhatsApp no tema quando houver número preenchido.',
     ]);
 
     // ======================
@@ -153,7 +193,11 @@ function chaveiro_menu_customize($wp_customize) {
         ]
     ));
 
-    $wp_customize->add_setting('font_body', ['default' => 'Roboto']);
+    $wp_customize->add_setting('font_body', [
+        'default'           => 'Roboto',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_body', [
         'label'       => 'Fonte do texto',
         'section'     => 'tipografia',
@@ -163,9 +207,13 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_body_weight', ['default' => '400']);
+    $wp_customize->add_setting('font_body_weight', [
+        'default'           => '400',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_body_weight', [
-        'label'       => 'Peso (300,400,700)',
+        'label'       => 'Peso (300, 400, 700)',
         'section'     => 'tipografia',
         'type'        => 'number',
         'input_attrs' => [
@@ -173,7 +221,11 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_body_size', ['default' => '16']);
+    $wp_customize->add_setting('font_body_size', [
+        'default'           => '16',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_body_size', [
         'label'       => 'Tamanho (px)',
         'section'     => 'tipografia',
@@ -183,7 +235,11 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_body_style', ['default' => 'normal']);
+    $wp_customize->add_setting('font_body_style', [
+        'default'           => 'normal',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_body_style', [
         'label'   => 'Estilo',
         'section' => 'tipografia',
@@ -209,7 +265,11 @@ function chaveiro_menu_customize($wp_customize) {
         ]
     ));
 
-    $wp_customize->add_setting('font_h1', ['default' => 'Poppins']);
+    $wp_customize->add_setting('font_h1', [
+        'default'           => 'Poppins',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_h1', [
         'label'       => 'Fonte H1',
         'section'     => 'tipografia',
@@ -219,7 +279,11 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_h1_weight', ['default' => '700']);
+    $wp_customize->add_setting('font_h1_weight', [
+        'default'           => '700',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_h1_weight', [
         'label'       => 'Peso H1',
         'section'     => 'tipografia',
@@ -229,7 +293,11 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_h1_size', ['default' => '42']);
+    $wp_customize->add_setting('font_h1_size', [
+        'default'           => '42',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_h1_size', [
         'label'       => 'Tamanho H1 (px)',
         'section'     => 'tipografia',
@@ -254,7 +322,11 @@ function chaveiro_menu_customize($wp_customize) {
         ]
     ));
 
-    $wp_customize->add_setting('font_h2', ['default' => 'Poppins']);
+    $wp_customize->add_setting('font_h2', [
+        'default'           => 'Poppins',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_h2', [
         'label'       => 'Fonte H2',
         'section'     => 'tipografia',
@@ -264,7 +336,11 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_h2_weight', ['default' => '600']);
+    $wp_customize->add_setting('font_h2_weight', [
+        'default'           => '600',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_h2_weight', [
         'label'       => 'Peso H2',
         'section'     => 'tipografia',
@@ -274,7 +350,11 @@ function chaveiro_menu_customize($wp_customize) {
         ],
     ]);
 
-    $wp_customize->add_setting('font_h2_size', ['default' => '32']);
+    $wp_customize->add_setting('font_h2_size', [
+        'default'           => '32',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+
     $wp_customize->add_control('font_h2_size', [
         'label'       => 'Tamanho H2 (px)',
         'section'     => 'tipografia',
@@ -283,6 +363,5 @@ function chaveiro_menu_customize($wp_customize) {
             'placeholder' => '32',
         ],
     ]);
-
 }
 add_action('customize_register', 'chaveiro_menu_customize');

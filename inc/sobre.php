@@ -42,7 +42,7 @@ function chaveiro_sobre_customize($wp_customize)
         [
             'label'       => 'Imagem',
             'section'     => 'sobre',
-            'description' => 'Use imagem quadrada (proporção 1:1). Exemplos: 300x300, 400x400, 500x500. O WordPress gera automaticamente um corte quadrado para melhor apresentação.'
+            'description' => 'Use imagem quadrada (1:1). Ex: 400x400 ou 600x600.'
         ]
     ));
 
@@ -63,57 +63,26 @@ function chaveiro_sobre_customize($wp_customize)
 
     $wp_customize->add_setting('sobre_titulo');
     $wp_customize->add_control('sobre_titulo', [
-        'label'       => 'Título',
-        'section'     => 'sobre',
-        'type'        => 'text',
-        'input_attrs' => [
-            'placeholder' => 'Ex.: Atendimento com experiência e confiança',
-        ],
+        'label'   => 'Título',
+        'section' => 'sobre',
+        'type'    => 'text'
     ]);
 
     $wp_customize->add_setting('sobre_subtitulo');
     $wp_customize->add_control('sobre_subtitulo', [
-        'label'       => 'Subtítulo',
-        'section'     => 'sobre',
-        'type'        => 'text',
-        'input_attrs' => [
-            'placeholder' => 'Ex.: Profissional pronto para emergências e serviços agendados',
-        ],
+        'label'   => 'Subtítulo',
+        'section' => 'sobre',
+        'type'    => 'text'
     ]);
 
     $wp_customize->add_setting('sobre_desc');
     $wp_customize->add_control('sobre_desc', [
-        'label'       => 'Descrição',
-        'section'     => 'sobre',
-        'type'        => 'textarea',
-        'input_attrs' => [
-            'placeholder' => 'Descreva experiência, diferenciais, área de atuação e mensagem institucional da seção Sobre.',
-        ],
+        'label'   => 'Descrição',
+        'section' => 'sobre',
+        'type'    => 'textarea'
     ]);
 }
 add_action('customize_register', 'chaveiro_sobre_customize');
-
-
-// ==============================
-// OBTER IMAGEM SOBRE COM CROP NATIVO
-// ==============================
-function chaveiro_get_sobre_image_url($image_url)
-{
-    if (empty($image_url)) {
-        return '';
-    }
-
-    $attachment_id = attachment_url_to_postid($image_url);
-
-    if ($attachment_id) {
-        $cropped = wp_get_attachment_image_url($attachment_id, 'sobre_quadrado');
-        if (!empty($cropped)) {
-            return $cropped;
-        }
-    }
-
-    return $image_url;
-}
 
 
 // ==============================
@@ -126,11 +95,11 @@ function chaveiro_render_sobre()
     }
 
     $img_original = get_theme_mod('sobre_imagem');
-    $img          = $img_original ? chaveiro_get_sobre_image_url($img_original) : '';
+    $img = $img_original;
 
     $formato = get_theme_mod('sobre_img_formato', 'rounded');
 
-    $class_img = 'img-fluid';
+    $class_img = 'img-fluid sobre-img';
 
     if ($formato === 'circle') {
         $class_img .= ' rounded-circle';
@@ -141,40 +110,59 @@ function chaveiro_render_sobre()
     $titulo    = get_theme_mod('sobre_titulo');
     $subtitulo = get_theme_mod('sobre_subtitulo');
     $desc      = get_theme_mod('sobre_desc');
-    ?>
+?>
 
-    <section class="sobre py-5">
-        <div class="container">
-            <div class="row align-items-center">
+<section class="sobre-section py-5">
 
-                <div class="col-md-6 text-center mb-4 mb-md-0">
-                    <?php if ($img) : ?>
+    <div class="container">
+
+        <div class="row align-items-center sobre-row">
+
+            <div class="col-lg-5 text-center mb-4 mb-lg-0">
+
+                <?php if ($img) : ?>
+
+                    <div class="sobre-img-wrapper">
+
                         <img
                             src="<?php echo esc_url($img); ?>"
                             class="<?php echo esc_attr($class_img); ?>"
-                            style="max-width: 300px; width: 300px; height: 300px; object-fit: cover;"
-                            alt="<?php echo esc_attr($titulo ? $titulo : 'Sobre o profissional'); ?>"
+                            alt="<?php echo esc_attr($titulo ? $titulo : 'Sobre'); ?>"
                         >
-                    <?php endif; ?>
-                </div>
 
-                <div class="col-md-6">
-                    <?php if ($titulo) : ?>
-                        <h2><?php echo esc_html($titulo); ?></h2>
-                    <?php endif; ?>
+                    </div>
 
-                    <?php if ($subtitulo) : ?>
-                        <h5 class="text-muted"><?php echo esc_html($subtitulo); ?></h5>
-                    <?php endif; ?>
-
-                    <?php if ($desc) : ?>
-                        <p class="mt-3"><?php echo esc_html($desc); ?></p>
-                    <?php endif; ?>
-                </div>
+                <?php endif; ?>
 
             </div>
-        </div>
-    </section>
 
-    <?php
+            <div class="col-lg-7 sobre-content">
+
+                <?php if ($titulo) : ?>
+                    <h2 class="sobre-title">
+                        <?php echo esc_html($titulo); ?>
+                    </h2>
+                <?php endif; ?>
+
+                <?php if ($subtitulo) : ?>
+                    <h5 class="sobre-subtitle">
+                        <?php echo esc_html($subtitulo); ?>
+                    </h5>
+                <?php endif; ?>
+
+                <?php if ($desc) : ?>
+                    <p class="sobre-text">
+                        <?php echo esc_html($desc); ?>
+                    </p>
+                <?php endif; ?>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<?php
 }

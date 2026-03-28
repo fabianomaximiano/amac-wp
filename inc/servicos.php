@@ -14,6 +14,20 @@ function chaveiro_servicos_sanitize_blur($value)
     return min(20, max(0, absint($value)));
 }
 
+function chaveiro_servicos_get_background_image_url($value)
+{
+    if (empty($value)) {
+        return '';
+    }
+
+    if (is_numeric($value)) {
+        $image_url = wp_get_attachment_image_url((int) $value, 'full');
+        return $image_url ? $image_url : '';
+    }
+
+    return esc_url_raw($value);
+}
+
 function chaveiro_servicos_section_customize($wp_customize)
 {
     $wp_customize->add_section('servicos_section', [
@@ -135,7 +149,7 @@ function chaveiro_servicos_section_customize($wp_customize)
 
     $wp_customize->add_setting('servicos_section_bg_image', [
         'default'           => '',
-        'sanitize_callback' => 'absint',
+        'sanitize_callback' => 'esc_url_raw',
     ]);
 
     $wp_customize->add_control(new WP_Customize_Image_Control(
@@ -612,8 +626,8 @@ function chaveiro_render_servicos()
     $bg_type              = get_theme_mod('servicos_section_bg_type', 'color');
     $bg_color_1           = get_theme_mod('servicos_section_bg_color', '#0A2540');
     $bg_color_2           = get_theme_mod('servicos_section_bg_color_2', '#007BFF');
-    $bg_image_id          = get_theme_mod('servicos_section_bg_image', '');
-    $bg_image             = $bg_image_id ? wp_get_attachment_image_url($bg_image_id, 'full') : '';
+    $bg_image_value       = get_theme_mod('servicos_section_bg_image', '');
+    $bg_image             = chaveiro_servicos_get_background_image_url($bg_image_value);
     $overlay              = get_theme_mod('servicos_section_overlay', 'rgba(0,0,0,0.45)');
     $bg_blur              = chaveiro_servicos_sanitize_blur(get_theme_mod('servicos_section_bg_blur', 0));
     $text_color           = get_theme_mod('servicos_section_text_color', '#ffffff');
@@ -637,6 +651,8 @@ function chaveiro_render_servicos()
     } elseif ($bg_type === 'image' && !empty($bg_image)) {
         $use_image_bg = true;
         $section_style = 'background:' . esc_attr($bg_color_1) . ';';
+    } elseif ($bg_type === 'image' && empty($bg_image)) {
+        $section_style = 'background:' . esc_attr($bg_color_1) . ';';
     }
 
     $query = new WP_Query([
@@ -647,7 +663,6 @@ function chaveiro_render_servicos()
             'date'       => 'ASC',
         ],
         'post_status'    => 'publish',
-        'tax_query'      => [],
     ]);
 
     if (!$query->have_posts()) {

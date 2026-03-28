@@ -1,10 +1,13 @@
 <?php
-$altura = (int) get_theme_mod('menu_altura', 80);
+$altura = (int) get_theme_mod('menu_altura', 88);
 $whatsapp = get_theme_mod('whatsapp_numero');
 $whatsapp_ativo = get_theme_mod('whatsapp_ativo', true);
 $whatsapp_link = !empty($whatsapp)
     ? 'https://wa.me/' . preg_replace('/\D+/', '', $whatsapp)
     : 'https://wa.me/5511999999999';
+
+$cta_texto = get_theme_mod('menu_cta_texto', 'Solicitar atendimento');
+$cta_link  = trim((string) get_theme_mod('menu_cta_link', ''));
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -23,15 +26,17 @@ $whatsapp_link = !empty($whatsapp)
          style="min-height: <?php echo esc_attr($altura); ?>px;">
         <div class="container navbar-main-container">
 
-            <a class="navbar-brand" href="<?php echo esc_url(home_url('/')); ?>">
-                <?php
-                if (has_custom_logo()) {
-                    the_custom_logo();
-                } else {
-                    bloginfo('name');
-                }
-                ?>
-            </a>
+            <div class="site-branding-wrap">
+                <a class="navbar-brand" href="<?php echo esc_url(home_url('/')); ?>">
+                    <?php
+                    if (has_custom_logo()) {
+                        the_custom_logo();
+                    } else {
+                        bloginfo('name');
+                    }
+                    ?>
+                </a>
+            </div>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="<?php esc_attr_e('Abrir menu', 'chaveiro'); ?>">
                 <span class="navbar-toggler-icon"></span>
@@ -39,21 +44,30 @@ $whatsapp_link = !empty($whatsapp)
 
             <div class="collapse navbar-collapse" id="menuPrincipal">
                 <div class="navbar-collapse-inner">
-                    <?php
-                    wp_nav_menu([
-                        'theme_location' => 'menu-principal',
-                        'container'      => false,
-                        'menu_class'     => 'navbar-nav header-menu align-items-lg-center',
-                        'fallback_cb'    => false,
-                    ]);
-                    ?>
+
+                    <div class="header-menu-wrap">
+                        <?php
+                        wp_nav_menu([
+                            'theme_location' => 'menu-principal',
+                            'container'      => false,
+                            'menu_class'     => 'navbar-nav header-menu align-items-lg-center',
+                            'fallback_cb'    => false,
+                        ]);
+                        ?>
+                    </div>
 
                     <div class="header-cta-group d-flex align-items-lg-center">
-                        <button type="button"
-                                id="abrirModal"
-                                class="btn btn-warning header-atendimento-btn">
-                            Solicitar atendimento
-                        </button>
+                        <?php if (!empty($cta_link)) : ?>
+                            <a href="<?php echo esc_url($cta_link); ?>" class="btn btn-warning header-atendimento-btn">
+                                <?php echo esc_html($cta_texto); ?>
+                            </a>
+                        <?php else : ?>
+                            <button type="button"
+                                    id="abrirModal"
+                                    class="btn btn-warning header-atendimento-btn">
+                                <?php echo esc_html($cta_texto); ?>
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

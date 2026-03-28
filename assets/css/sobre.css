@@ -1,0 +1,94 @@
+/* ==============================
+   SOBRE SECTION
+============================== */
+
+.sobre-section {
+    background: #f8f9fa;
+}
+
+/* imagem */
+
+.sobre-img-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.sobre-img {
+
+    max-width: 380px;
+    width: 100%;
+    height: auto;
+
+    object-fit: cover;
+
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+
+    transition: transform .3s ease;
+}
+
+.sobre-img:hover {
+    transform: scale(1.02);
+}
+
+/* conteúdo */
+
+.sobre-content {
+    max-width: 520px;
+}
+
+/* título */
+
+.sobre-title {
+
+    font-size: 42px;
+    font-weight: 700;
+
+    margin-bottom: 10px;
+
+    line-height: 1.2;
+}
+
+/* subtítulo */
+
+.sobre-subtitle {
+
+    font-size: 18px;
+
+    color: #6c757d;
+
+    margin-bottom: 18px;
+}
+
+/* texto */
+
+.sobre-text {
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    color: #444;
+}
+
+/* responsivo */
+
+@media (max-width: 991px) {
+
+    .sobre-title {
+
+        font-size: 32px;
+
+        text-align: center;
+    }
+
+    .sobre-subtitle {
+
+        text-align: center;
+    }
+
+    .sobre-text {
+
+        text-align: center;
+    }
+
+}

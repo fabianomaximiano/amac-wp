@@ -1,9 +1,5 @@
-/* ==============================
-SEÇÃO DE SERVIÇOS
-============================== */
-
-.servicos-section,
-.servicos {
+.produtos-section,
+.produtos {
     position: relative;
     z-index: 1;
     padding-top: var(--section-spacing);
@@ -12,19 +8,14 @@ SEÇÃO DE SERVIÇOS
     margin-bottom: 0 !important;
 }
 
-.servicos-section {
+.produtos-section {
     overflow: hidden;
-    padding-top: calc(8rem + var(--header-offset));
+    padding-top: 8rem;
     padding-bottom: 8rem;
     isolation: isolate;
 }
 
-.hero-section + .servicos-section,
-.hero-section + section#servicos.servicos-section {
-    padding-top: 8rem;
-}
-
-.servicos-section-bg {
+.produtos-section-bg {
     position: absolute;
     inset: -20px;
     z-index: 0;
@@ -35,107 +26,86 @@ SEÇÃO DE SERVIÇOS
     will-change: transform, filter;
 }
 
-.servicos-section-overlay {
+.produtos-section-overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
 }
 
-.servicos-section .container {
+.produtos-section .container {
     position: relative;
     z-index: 2;
 }
 
-/* ==============================
-TÍTULOS DA SEÇÃO
-============================== */
-
-.servicos-section-title {
+.produtos-section-title {
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 700;
     line-height: 1.12;
     letter-spacing: -0.01em;
     text-align: center;
-    text-wrap: balance;
     max-width: 780px;
     margin: 0 auto 1.2rem;
 }
 
-.servicos-section-subtitle {
+.produtos-section-subtitle {
     font-size: clamp(1rem, 1.6vw, 1.25rem);
     font-weight: 400;
     line-height: 1.65;
-    letter-spacing: 0;
     text-align: center;
-    text-wrap: pretty;
     max-width: 840px;
     margin: 0 auto 4rem;
     opacity: 0.98;
 }
 
-/* ==============================
-GRID
-============================== */
-
-.servicos-cards-row {
+.produtos-cards-row {
     margin-top: 2.5rem;
     justify-content: center;
     align-items: stretch;
 }
 
-.servicos-section .col-lg-4,
-.servicos-section .col-md-6,
-.servicos-section .col-md-4 {
-    display: flex;
-    margin-bottom: 30px;
-}
-
-/* ==============================
-CARD
-============================== */
-
-.servico-card {
+.produto-card {
     width: 100%;
     border-radius: 24px;
     box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     height: 100%;
-    margin-top: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border: 0;
 }
 
-.servico-card:hover {
+.produto-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 22px 42px rgba(0, 0, 0, 0.18);
 }
 
-.servico-card-topo {
+.produto-card-topo,
+.produto-card-topo-imagem,
+.produto-card-topo-icone {
     position: relative;
-}
-
-.servico-card-topo-imagem {
-    min-height: 215px;
     overflow: hidden;
 }
 
-.servico-card-topo-imagem img {
+.produto-card-topo-imagem {
+    min-height: 215px;
+}
+
+.produto-card-topo-imagem img {
     width: 100%;
     height: 215px;
     object-fit: cover;
     display: block;
-    transform: scale(1.01);
 }
 
-.servico-card-topo-overlay {
+.produto-card-topo-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0%, rgba(0, 0, 0, 0.38) 100%);
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0%, rgba(0, 0, 0, 0.42) 100%);
 }
 
-.servico-card-topo-conteudo {
+.produto-card-topo-conteudo {
     position: absolute;
     inset: 0;
     z-index: 2;
@@ -147,19 +117,29 @@ CARD
     text-align: center;
 }
 
-.servico-card-topo-icone {
-    padding: 2rem 1.5rem 1rem;
+.produto-card-topo-icone {
+    padding: 2rem 1.5rem 1.5rem;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 235px;
 }
 
-.servico-media-icon-circle {
+.produto-media {
+    position: relative;
+    z-index: 2;
+}
+
+.produto-media-icon-circle {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.35rem;
 }
 
-.servico-media-icon-circle-inner {
+.produto-media-icon-circle-inner {
     width: 118px;
     height: 118px;
     border-radius: 50%;
@@ -170,83 +150,105 @@ CARD
     box-shadow: 0 12px 24px rgba(245, 166, 35, 0.22);
 }
 
-.servico-media-icon-circle-inner i {
+.produto-media-icon-circle-inner i {
     font-size: 3rem;
     line-height: 1;
     color: #ffffff;
 }
 
-.servico-card-topo-conteudo-icone {
-    position: static;
-    inset: auto;
-    display: block;
-    padding: 0;
+.produto-card-topo-texto-icone {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 240px;
+    margin: 0 auto;
     text-align: center;
 }
 
-.servico-titulo,
-.card-servico h5,
-.servico-card h3 {
+.produto-titulo {
     font-size: clamp(1.35rem, 2vw, 1.7rem);
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.01em;
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.6rem;
     text-wrap: balance;
 }
 
-.servico-subtitulo,
-.card-servico .servico-subtitulo {
+.produto-subtitulo {
     font-size: clamp(0.95rem, 1.3vw, 1.05rem);
     font-weight: 500;
-    line-height: 1.45;
-    letter-spacing: 0;
+    line-height: 1.5;
     margin-bottom: 0;
-    text-wrap: pretty;
     opacity: 0.96;
+    text-wrap: pretty;
 }
 
-.servico-card-imagem .servico-titulo,
-.servico-card-topo-imagem .servico-titulo,
-.servico-card-imagem .servico-subtitulo,
-.servico-card-topo-imagem .servico-subtitulo {
+.produto-card-topo-imagem .produto-titulo,
+.produto-card-topo-imagem .produto-subtitulo {
     color: #ffffff;
 }
 
-.servico-card-icone .servico-titulo,
-.servico-card-topo-icone .servico-titulo,
-.servico-card-icone .servico-subtitulo,
-.servico-card-topo-icone .servico-subtitulo {
+.produto-card-topo-icone .produto-titulo,
+.produto-card-topo-icone .produto-subtitulo {
     color: #111111;
 }
 
-.servico-card-body {
+.produto-card-body {
     height: 100%;
     width: 100%;
-    padding: 1.15rem 1.75rem 2rem;
+    padding: 1.35rem 1.75rem 2rem;
     text-align: center;
 }
 
-.servico-resumo {
-    max-width: 100%;
+.produto-valor {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--azul-principal, #007bff);
+    margin-bottom: 1.2rem;
 }
 
-.servico-resumo p {
+.produto-resumo p {
     margin-bottom: 0;
     font-size: 1rem;
     line-height: 1.75;
 }
 
-/* ==============================
-BLOCO FINAL DA HOME
-============================== */
+.produto-card-tarja {
+    position: absolute;
+    top: 18px;
+    right: -48px;
+    z-index: 4;
+    width: 190px;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transform: rotate(45deg);
+    transform-origin: center;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+}
 
-.servicos-footer-cta {
+.produto-card-tarja span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.produtos-footer-cta {
     margin-top: 2rem;
     padding-top: 1.5rem;
 }
 
-.servicos-footer-cta-title {
+.produtos-footer-cta-title {
     font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 700;
     line-height: 1.12;
@@ -256,7 +258,7 @@ BLOCO FINAL DA HOME
     text-wrap: balance;
 }
 
-.servicos-footer-cta-subtitle {
+.produtos-footer-cta-subtitle {
     max-width: 740px;
     margin: 0 auto 1.4rem;
     font-size: clamp(1rem, 1.4vw, 1.15rem);
@@ -266,27 +268,23 @@ BLOCO FINAL DA HOME
     text-wrap: pretty;
 }
 
-.servicos-footer-cta-button {
+.produtos-footer-cta-button {
     border-radius: 12px;
     padding: 0.85rem 1.4rem;
     font-weight: 600;
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* ==============================
-ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
-============================== */
-
-.servicos-archive-page {
+.produtos-archive-page {
     padding: calc(5rem + var(--header-offset)) 0 5rem;
     background: #f8fafc;
 }
 
-.servicos-archive-header {
+.produtos-archive-header {
     margin-bottom: 2rem;
 }
 
-.servicos-archive-kicker {
+.produtos-archive-kicker {
     display: inline-block;
     margin-bottom: 0.85rem;
     font-size: 0.92rem;
@@ -296,15 +294,13 @@ ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
     color: var(--azul-principal, #007bff);
 }
 
-.servicos-archive-title {
+.produtos-archive-title {
     font-size: clamp(2rem, 4vw, 3.4rem);
     line-height: 1.1;
-    letter-spacing: -0.02em;
     margin-bottom: 1rem;
-    text-wrap: balance;
 }
 
-.servicos-archive-description {
+.produtos-archive-description {
     max-width: 860px;
     margin: 0 auto;
     font-size: 1.05rem;
@@ -312,7 +308,7 @@ ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
     color: #52606d;
 }
 
-.servicos-categorias-filtro {
+.produtos-categorias-filtro {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -320,7 +316,7 @@ ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
     margin: 0 0 2.25rem;
 }
 
-.servicos-categoria-link {
+.produtos-categoria-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -334,29 +330,25 @@ ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
     transition: all 0.25s ease;
 }
 
-.servicos-categoria-link:hover,
-.servicos-categoria-link.is-active {
+.produtos-categoria-link:hover,
+.produtos-categoria-link.is-active {
     color: #ffffff;
     background: var(--azul-principal, #007bff);
     border-color: var(--azul-principal, #007bff);
     text-decoration: none;
 }
 
-.servicos-archive-grid {
-    align-items: stretch;
-}
-
-.servicos-archive-card-wrap {
+.produtos-archive-card-wrap {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.servicos-archive-card-footer {
+.produtos-archive-card-footer {
     margin-top: 0.9rem;
 }
 
-.servicos-archive-card-link {
+.produtos-archive-card-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -372,25 +364,17 @@ ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
     transition: all 0.25s ease;
 }
 
-.servicos-archive-card-link:hover {
+.produtos-archive-card-link:hover {
     background: var(--azul-principal, #007bff);
     color: #ffffff;
     text-decoration: none;
 }
 
-.servicos-empty {
-    padding: 3rem 1rem 1rem;
-}
-
-/* ==============================
-SINGLE SERVIÇO
-============================== */
-
-.servico-single-wrap {
+.produto-single-wrap {
     margin-top: 1rem;
 }
 
-.servico-single-media {
+.produto-single-media {
     min-height: 320px;
     border-radius: 24px;
     overflow: hidden;
@@ -402,7 +386,7 @@ SINGLE SERVIÇO
     justify-content: center;
 }
 
-.servico-single-img {
+.produto-single-img {
     width: 100%;
     height: 100%;
     min-height: 320px;
@@ -410,11 +394,11 @@ SINGLE SERVIÇO
     display: block;
 }
 
-.servico-single-placeholder {
+.produto-single-placeholder {
     background: linear-gradient(145deg, #f3f4f6 0%, #e5e7eb 100%);
 }
 
-.servico-single-placeholder-circle {
+.produto-single-placeholder-circle {
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -425,27 +409,27 @@ SINGLE SERVIÇO
     box-shadow: inset 0 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.servico-single-placeholder-circle i {
+.produto-single-placeholder-circle i {
     font-size: 3.8rem;
     line-height: 1;
     color: #6b7280;
 }
 
-.servico-single-card {
+.produto-single-card {
     background: #ffffff;
     border-radius: 24px;
     padding: 2rem;
     box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
 }
 
-.servico-single-categorias {
+.produto-single-categorias {
     display: flex;
     flex-wrap: wrap;
     gap: 0.65rem;
     margin-bottom: 1rem;
 }
 
-.servico-single-tag {
+.produto-single-tag {
     display: inline-flex;
     align-items: center;
     padding: 0.55rem 0.9rem;
@@ -457,12 +441,7 @@ SINGLE SERVIÇO
     text-decoration: none;
 }
 
-.servico-single-tag:hover {
-    text-decoration: none;
-    opacity: 0.9;
-}
-
-.servico-single-subtitulo {
+.produto-single-subtitulo {
     font-size: 1.15rem;
     font-weight: 600;
     line-height: 1.5;
@@ -470,123 +449,110 @@ SINGLE SERVIÇO
     margin-bottom: 1rem;
 }
 
-.servico-single-resumo p,
-.servico-single-content p {
+.produto-single-valor {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--azul-principal, #007bff);
+    margin-bottom: 1rem;
+}
+
+.produto-single-resumo p,
+.produto-single-content p {
     font-size: 1rem;
     line-height: 1.85;
     color: #4a5568;
 }
 
-.servico-single-content {
+.produto-single-content {
     margin-top: 1rem;
 }
 
-.servico-single-back {
+.produto-single-back {
     margin-top: 1rem;
     border-radius: 12px;
     padding: 0.75rem 1.15rem;
 }
 
-/* ==============================
-RESPONSIVO
-============================== */
-
 @media (max-width: 991.98px) {
-    .servicos-section {
-        padding-top: calc(6rem + var(--header-offset));
+    .produtos-section {
+        padding-top: 6rem;
         padding-bottom: 6rem;
     }
 
-    .hero-section + .servicos-section,
-    .hero-section + section#servicos.servicos-section {
-        padding-top: 6rem;
-    }
-
-    .servicos-section-subtitle {
-        margin-bottom: 3.5rem;
-    }
-
-    .servicos-cards-row {
-        margin-top: 1rem;
-    }
-
-    .servico-card-topo-imagem,
-    .servico-card-topo-imagem img {
+    .produto-card-topo-imagem,
+    .produto-card-topo-imagem img {
         min-height: 190px;
         height: 190px;
     }
 
-    .servico-media-icon-circle-inner {
+    .produto-media-icon-circle-inner {
         width: 106px;
         height: 106px;
     }
 
-    .servicos-archive-page {
+    .produtos-archive-page {
         padding: calc(4rem + var(--header-offset)) 0 4rem;
     }
 }
 
 @media (max-width: 767.98px) {
-    .servicos-section {
-        padding-top: calc(5rem + var(--header-offset));
+    .produtos-section {
+        padding-top: 5rem;
         padding-bottom: 5rem;
     }
 
-    .hero-section + .servicos-section,
-    .hero-section + section#servicos.servicos-section {
-        padding-top: 5rem;
-    }
-
-    .servicos-section-subtitle {
-        margin-bottom: 3rem;
-    }
-
-    .servicos-cards-row {
-        margin-top: 0.75rem;
-    }
-
-    .servico-card-topo-imagem,
-    .servico-card-topo-imagem img {
+    .produto-card-topo-imagem,
+    .produto-card-topo-imagem img {
         min-height: 175px;
         height: 175px;
     }
 
-    .servico-card-body {
+    .produto-card-topo-icone {
+        min-height: 220px;
+        padding: 1.75rem 1.25rem 1.35rem;
+    }
+
+    .produto-card-body {
         padding: 1rem 1.35rem 1.6rem;
     }
 
-    .servico-media-icon-circle-inner {
+    .produto-media-icon-circle-inner {
         width: 92px;
         height: 92px;
     }
 
-    .servico-media-icon-circle-inner i {
+    .produto-media-icon-circle-inner i {
         font-size: 2.4rem;
     }
 
-    .servicos-footer-cta {
-        margin-top: 1rem;
+    .produto-card-tarja {
+        top: 16px;
+        right: -52px;
+        width: 170px;
+        min-height: 38px;
+        font-size: 0.88rem;
+        padding: 7px 14px;
     }
 
-    .servicos-archive-page {
+    .produtos-archive-page {
         padding: calc(3.5rem + var(--header-offset)) 0 3.5rem;
     }
 
-    .servico-single-media,
-    .servico-single-img {
+    .produto-single-media,
+    .produto-single-img {
         min-height: 240px;
     }
 
-    .servico-single-placeholder-circle {
+    .produto-single-placeholder-circle {
         width: 118px;
         height: 118px;
     }
 
-    .servico-single-placeholder-circle i {
+    .produto-single-placeholder-circle i {
         font-size: 3rem;
     }
 
-    .servico-single-card {
+    .produto-single-card {
         padding: 1.35rem;
     }
 }
