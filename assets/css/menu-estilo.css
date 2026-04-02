@@ -1,0 +1,110 @@
+/* ==============================
+MENU - ESTILO VISUAL DINÂMICO
+Responsável apenas por aparência
+============================== */
+
+.site-header .navbar {
+    background: var(--header-faixa-bg, #eef1f5);
+}
+
+.site-branding-wrap .navbar-brand,
+.site-branding-wrap .navbar-brand:hover {
+    color: var(--header-logo-texto-cor, #0f172a);
+}
+
+.navbar-nav .nav-link,
+.navbar-nav .menu-item > a {
+    color: var(--header-menu-link-cor, #0f172a);
+    border-radius: 12px;
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.navbar-nav .nav-link::after,
+.navbar-nav .menu-item > a::after {
+    background: var(--header-menu-indicador-cor, #0ea5e9);
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .menu-item > a:hover,
+.navbar-nav .nav-link:focus,
+.navbar-nav .menu-item > a:focus {
+    color: var(--header-menu-link-hover-cor, #0ea5e9);
+    background: var(--header-menu-hover-bg, rgba(255, 255, 255, 0.35));
+    text-decoration: none;
+}
+
+.navbar-nav .current-menu-item > a,
+.navbar-nav .current-menu-ancestor > a,
+.navbar-nav .nav-link.active {
+    color: var(--header-menu-link-ativo-cor, #0284c7);
+}
+
+.header-menu .sub-menu {
+    background: #ffffff;
+}
+
+.header-menu .sub-menu a {
+    color: var(--header-menu-link-cor, #0f172a);
+    border-radius: 12px;
+    transition:
+        color 0.25s ease,
+        background-color 0.25s ease;
+}
+
+.header-menu .sub-menu a:hover,
+.header-menu .sub-menu a:focus {
+    color: var(--header-menu-link-hover-cor, #0ea5e9);
+    background: var(--header-menu-hover-bg, rgba(255, 255, 255, 0.35));
+    text-decoration: none;
+}
+
+.header-atendimento-btn,
+.header-atendimento-btn.btn,
+.header-atendimento-btn.btn-warning {
+    background: var(--header-cta-bg, #facc15);
+    color: var(--header-cta-texto-cor, #111111);
+    border: 1px solid var(--header-cta-borda-cor, #facc15);
+    border-radius: var(--header-cta-radius, 14px);
+    box-shadow: 0 10px 24px var(--header-cta-shadow, rgba(245, 158, 11, 0.24));
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.header-atendimento-btn:hover,
+.header-atendimento-btn:focus,
+.header-atendimento-btn.btn:hover,
+.header-atendimento-btn.btn:focus,
+.header-atendimento-btn.btn-warning:hover,
+.header-atendimento-btn.btn-warning:focus {
+    background: var(--header-cta-bg-hover, #eab308);
+    color: var(--header-cta-texto-hover, #111111);
+    border-color: var(--header-cta-borda-cor, #facc15);
+    box-shadow: 0 14px 28px var(--header-cta-shadow-hover, rgba(245, 158, 11, 0.32));
+    text-decoration: none;
+}
+#f4f1e8#E4DDD0
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: #ffffff;
+    }
+
+    .navbar-nav .nav-link,
+    .navbar-nav .menu-item > a {
+        border-radius: 10px;
+    }
+
+    .header-menu .sub-menu {
+        background: transparent;
+    }
+
+    .header-menu .sub-menu a {
+        border-radius: 10px;
+    }
+}

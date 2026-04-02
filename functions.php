@@ -46,6 +46,7 @@ function chaveiro_customizer_panel_styles()
         'faq',
         'servicos_section',
         'produtos_section',
+        'menu_estilo_secao',
     );
     ?>
     <style>
@@ -286,6 +287,7 @@ require_once get_template_directory() . '/inc/admin-menu.php';
 require_once get_template_directory() . '/inc/clientes.php';
 require_once get_template_directory() . '/inc/leads.php';
 require_once get_template_directory() . '/inc/cidades.php';
+require_once get_template_directory() . '/inc/menu-estilo.php';
 
 // ==============================
 // HERO / SOBRE - TAMANHOS NATIVOS E WEBP
