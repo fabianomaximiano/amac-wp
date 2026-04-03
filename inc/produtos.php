@@ -678,7 +678,7 @@ function chaveiro_render_produto_tarja($mostrar_tarja, $texto_tarja, $cor_tarja,
     <?php
 }
 
-function chaveiro_render_single_produto_card($post_id = 0, $card_bg_color = '#ffffff', $card_text_color = '#111111')
+function chaveiro_render_single_produto_card($post_id = 0, $card_bg_color = '#ffffff', $card_text_color = '#111111', $link_url = '')
 {
     $post_id = $post_id ? $post_id : get_the_ID();
     $data    = chaveiro_get_produto_card_data($post_id);
@@ -698,7 +698,13 @@ function chaveiro_render_single_produto_card($post_id = 0, $card_bg_color = '#ff
     $cor_tarja       = !empty($data['cor_tarja']) ? $data['cor_tarja'] : '#ff1e1e';
     $cor_texto_tarja = !empty($data['cor_texto_tarja']) ? $data['cor_texto_tarja'] : '#ffffff';
     $imagem          = $data['imagem'];
+
+    $open_link = !empty($link_url);
     ?>
+    <?php if ($open_link) : ?>
+        <a href="<?php echo esc_url($link_url); ?>" class="produto-card-link-wrapper" aria-label="<?php echo esc_attr(get_the_title($post_id)); ?>">
+    <?php endif; ?>
+
     <article class="produto-card produto-card-<?php echo esc_attr($tipo_midia); ?> h-100 w-100" style="background: <?php echo esc_attr($card_bg_color); ?>; color: <?php echo esc_attr($card_text_color); ?>;">
         <?php if ($tipo_midia === 'imagem' && !empty($imagem)) : ?>
             <div class="produto-card-topo produto-card-topo-imagem">
@@ -746,6 +752,10 @@ function chaveiro_render_single_produto_card($post_id = 0, $card_bg_color = '#ff
             <?php endif; ?>
         </div>
     </article>
+
+    <?php if ($open_link) : ?>
+        </a>
+    <?php endif; ?>
     <?php
 }
 
@@ -839,7 +849,7 @@ function chaveiro_render_produtos()
                     $query->the_post();
                     ?>
                     <div class="col-lg-4 col-md-6 mb-4 d-flex">
-                        <?php chaveiro_render_single_produto_card(get_the_ID(), $card_bg_color, $card_text_color); ?>
+                        <?php chaveiro_render_single_produto_card(get_the_ID(), $card_bg_color, $card_text_color, get_permalink()); ?>
                     </div>
                 <?php endwhile; ?>
             </div>
@@ -994,7 +1004,7 @@ function chaveiro_render_produtos_archive_content($custom_query = null)
                             ?>
                             <div class="col-lg-4 col-md-6 mb-4 d-flex">
                                 <div class="produtos-archive-card-wrap">
-                                    <?php chaveiro_render_single_produto_card(get_the_ID(), $card_bg_color, $card_text_color); ?>
+                                    <?php chaveiro_render_single_produto_card(get_the_ID(), $card_bg_color, $card_text_color, get_permalink()); ?>
 
                                     <div class="produtos-archive-card-footer text-center">
                                         <a href="<?php the_permalink(); ?>" class="produtos-archive-card-link">

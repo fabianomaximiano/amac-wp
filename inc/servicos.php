@@ -560,7 +560,7 @@ function chaveiro_get_servico_card_data($post_id = 0)
     ];
 }
 
-function chaveiro_render_single_servico_card($post_id = 0, $card_bg_color = '#ffffff', $card_text_color = '#111111')
+function chaveiro_render_single_servico_card($post_id = 0, $card_bg_color = '#ffffff', $card_text_color = '#111111', $link_url = '')
 {
     $post_id = $post_id ? $post_id : get_the_ID();
     $data    = chaveiro_get_servico_card_data($post_id);
@@ -574,7 +574,13 @@ function chaveiro_render_single_servico_card($post_id = 0, $card_bg_color = '#ff
     $subtitulo  = $data['subtitulo'];
     $resumo     = $data['resumo'];
     $imagem     = $data['imagem'];
+
+    $open_link  = !empty($link_url);
     ?>
+    <?php if ($open_link) : ?>
+        <a href="<?php echo esc_url($link_url); ?>" class="servico-card-link-wrapper" aria-label="<?php echo esc_attr(get_the_title($post_id)); ?>">
+    <?php endif; ?>
+
     <article class="servico-card servico-card-<?php echo esc_attr($tipo_midia); ?> h-100 w-100" style="background: <?php echo esc_attr($card_bg_color); ?>; color: <?php echo esc_attr($card_text_color); ?>;">
         <?php if ($tipo_midia === 'imagem' && !empty($imagem)) : ?>
             <div class="servico-card-topo servico-card-topo-imagem">
@@ -612,6 +618,10 @@ function chaveiro_render_single_servico_card($post_id = 0, $card_bg_color = '#ff
             <?php endif; ?>
         </div>
     </article>
+
+    <?php if ($open_link) : ?>
+        </a>
+    <?php endif; ?>
     <?php
 }
 
@@ -705,7 +715,7 @@ function chaveiro_render_servicos()
                     $query->the_post();
                     ?>
                     <div class="col-lg-4 col-md-6 mb-4 d-flex">
-                        <?php chaveiro_render_single_servico_card(get_the_ID(), $card_bg_color, $card_text_color); ?>
+                        <?php chaveiro_render_single_servico_card(get_the_ID(), $card_bg_color, $card_text_color, get_permalink()); ?>
                     </div>
                 <?php endwhile; ?>
             </div>
@@ -855,7 +865,7 @@ function chaveiro_render_servicos_archive_content($custom_query = null)
                             ?>
                             <div class="col-lg-4 col-md-6 mb-4 d-flex">
                                 <div class="servicos-archive-card-wrap">
-                                    <?php chaveiro_render_single_servico_card(get_the_ID(), $card_bg_color, $card_text_color); ?>
+                                    <?php chaveiro_render_single_servico_card(get_the_ID(), $card_bg_color, $card_text_color, get_permalink()); ?>
 
                                     <div class="servicos-archive-card-footer text-center">
                                         <a href="<?php the_permalink(); ?>" class="servicos-archive-card-link">
