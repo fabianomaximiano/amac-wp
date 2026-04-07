@@ -293,7 +293,7 @@ ARQUIVO / TAXONOMIA / PÁGINA DE SERVIÇOS
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--azul-principal, #007bff);
+    color: #6b7280;
 }
 
 .servicos-archive-title {

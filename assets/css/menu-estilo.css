@@ -8,14 +8,20 @@ Responsável apenas por aparência
 }
 
 .site-branding-wrap .navbar-brand,
-.site-branding-wrap .navbar-brand:hover {
+.site-branding-wrap .navbar-brand:hover,
+.site-branding-wrap .navbar-brand:focus,
+.site-branding-wrap .navbar-brand:visited {
     color: var(--header-logo-texto-cor, #0f172a);
+    text-decoration: none !important;
 }
 
 .navbar-nav .nav-link,
-.navbar-nav .menu-item > a {
+.navbar-nav .menu-item > a,
+.navbar-nav .nav-link:visited,
+.navbar-nav .menu-item > a:visited {
     color: var(--header-menu-link-cor, #0f172a);
     border-radius: 12px;
+    text-decoration: none !important;
     transition:
         color 0.25s ease,
         background-color 0.25s ease,
@@ -24,7 +30,8 @@ Responsável apenas por aparência
 
 .navbar-nav .nav-link::after,
 .navbar-nav .menu-item > a::after {
-    background: var(--header-menu-indicador-cor, #0ea5e9);
+    display: none !important;
+    content: none !important;
 }
 
 .navbar-nav .nav-link:hover,
@@ -33,22 +40,27 @@ Responsável apenas por aparência
 .navbar-nav .menu-item > a:focus {
     color: var(--header-menu-link-hover-cor, #0ea5e9);
     background: var(--header-menu-hover-bg, rgba(255, 255, 255, 0.35));
-    text-decoration: none;
+    text-decoration: none !important;
 }
 
 .navbar-nav .current-menu-item > a,
 .navbar-nav .current-menu-ancestor > a,
-.navbar-nav .nav-link.active {
+.navbar-nav .nav-link.active,
+.navbar-nav .current-menu-item > a:visited,
+.navbar-nav .current-menu-ancestor > a:visited {
     color: var(--header-menu-link-ativo-cor, #0284c7);
+    text-decoration: none !important;
 }
 
 .header-menu .sub-menu {
     background: #ffffff;
 }
 
-.header-menu .sub-menu a {
+.header-menu .sub-menu a,
+.header-menu .sub-menu a:visited {
     color: var(--header-menu-link-cor, #0f172a);
     border-radius: 12px;
+    text-decoration: none !important;
     transition:
         color 0.25s ease,
         background-color 0.25s ease;
@@ -58,7 +70,7 @@ Responsável apenas por aparência
 .header-menu .sub-menu a:focus {
     color: var(--header-menu-link-hover-cor, #0ea5e9);
     background: var(--header-menu-hover-bg, rgba(255, 255, 255, 0.35));
-    text-decoration: none;
+    text-decoration: none !important;
 }
 
 .header-atendimento-btn,
@@ -87,9 +99,9 @@ Responsável apenas por aparência
     color: var(--header-cta-texto-hover, #111111);
     border-color: var(--header-cta-borda-cor, #facc15);
     box-shadow: 0 14px 28px var(--header-cta-shadow-hover, rgba(245, 158, 11, 0.32));
-    text-decoration: none;
+    text-decoration: none !important;
 }
-#f4f1e8#E4DDD0
+
 @media (max-width: 991.98px) {
     .navbar-collapse {
         background: #ffffff;

@@ -28,6 +28,35 @@ function chaveiro_servicos_get_background_image_url($value)
     return esc_url_raw($value);
 }
 
+function chaveiro_servicos_get_resumo_curto($post_id = 0, $word_limit = 22)
+{
+    $post_id = $post_id ? (int) $post_id : get_the_ID();
+
+    if (!$post_id) {
+        return '';
+    }
+
+    $post = get_post($post_id);
+
+    if (!$post instanceof WP_Post) {
+        return '';
+    }
+
+    if (!empty($post->post_excerpt)) {
+        return trim(wp_strip_all_tags($post->post_excerpt));
+    }
+
+    if (!empty($post->post_content)) {
+        return wp_trim_words(
+            wp_strip_all_tags(strip_shortcodes($post->post_content)),
+            $word_limit,
+            '...'
+        );
+    }
+
+    return '';
+}
+
 function chaveiro_servicos_section_customize($wp_customize)
 {
     $wp_customize->add_section('servicos_section', [
@@ -369,7 +398,7 @@ function chaveiro_register_servicos_cpt()
         'show_ui'             => true,
         'show_in_menu'        => true,
         'menu_icon'           => 'dashicons-admin-tools',
-        'supports'            => ['title', 'page-attributes', 'thumbnail'],
+        'supports'            => ['title', 'editor', 'excerpt', 'page-attributes', 'thumbnail'],
         'hierarchical'        => false,
         'show_in_rest'        => true,
         'has_archive'         => true,
@@ -435,7 +464,6 @@ function chaveiro_render_servicos_meta_box($post)
     $tipo_midia = get_post_meta($post->ID, '_servico_tipo_midia', true);
     $icone      = get_post_meta($post->ID, '_servico_icone', true);
     $subtitulo  = get_post_meta($post->ID, '_servico_subtitulo', true);
-    $resumo     = get_post_meta($post->ID, '_servico_resumo', true);
 
     if ($ativo === '') {
         $ativo = '1';
@@ -482,16 +510,6 @@ function chaveiro_render_servicos_meta_box($post)
             style="width: 100%;"
         >
     </p>
-
-    <p>
-        <label for="servico_resumo"><strong>Descrição curta</strong></label><br>
-        <textarea
-            id="servico_resumo"
-            name="servico_resumo"
-            rows="4"
-            style="width: 100%;"
-        ><?php echo esc_textarea($resumo); ?></textarea>
-    </p>
     <?php
 }
 
@@ -522,10 +540,6 @@ function chaveiro_save_servicos_meta($post_id)
     if (isset($_POST['servico_subtitulo'])) {
         update_post_meta($post_id, '_servico_subtitulo', sanitize_text_field(wp_unslash($_POST['servico_subtitulo'])));
     }
-
-    if (isset($_POST['servico_resumo'])) {
-        update_post_meta($post_id, '_servico_resumo', sanitize_textarea_field(wp_unslash($_POST['servico_resumo'])));
-    }
 }
 add_action('save_post_servicos', 'chaveiro_save_servicos_meta');
 
@@ -555,7 +569,7 @@ function chaveiro_get_servico_card_data($post_id = 0)
         'tipo_midia' => get_post_meta($post_id, '_servico_tipo_midia', true),
         'icone'      => get_post_meta($post_id, '_servico_icone', true),
         'subtitulo'  => get_post_meta($post_id, '_servico_subtitulo', true),
-        'resumo'     => get_post_meta($post_id, '_servico_resumo', true),
+        'resumo'     => chaveiro_servicos_get_resumo_curto($post_id),
         'imagem'     => get_the_post_thumbnail_url($post_id, 'servico_card'),
     ];
 }
@@ -575,7 +589,7 @@ function chaveiro_render_single_servico_card($post_id = 0, $card_bg_color = '#ff
     $resumo     = $data['resumo'];
     $imagem     = $data['imagem'];
 
-    $open_link  = !empty($link_url);
+    $open_link = !empty($link_url);
     ?>
     <?php if ($open_link) : ?>
         <a href="<?php echo esc_url($link_url); ?>" class="servico-card-link-wrapper" aria-label="<?php echo esc_attr(get_the_title($post_id)); ?>">
@@ -631,25 +645,25 @@ function chaveiro_render_servicos()
         return;
     }
 
-    $titulo               = get_theme_mod('servicos_section_titulo', 'Nossos Principais Serviços');
-    $subtitulo            = get_theme_mod('servicos_section_subtitulo', 'Atendimento profissional, rápido e seguro.');
-    $bg_type              = get_theme_mod('servicos_section_bg_type', 'color');
-    $bg_color_1           = get_theme_mod('servicos_section_bg_color', '#0A2540');
-    $bg_color_2           = get_theme_mod('servicos_section_bg_color_2', '#007BFF');
-    $bg_image_value       = get_theme_mod('servicos_section_bg_image', '');
-    $bg_image             = chaveiro_servicos_get_background_image_url($bg_image_value);
-    $overlay              = get_theme_mod('servicos_section_overlay', 'rgba(0,0,0,0.45)');
-    $bg_blur              = chaveiro_servicos_sanitize_blur(get_theme_mod('servicos_section_bg_blur', 0));
-    $text_color           = get_theme_mod('servicos_section_text_color', '#ffffff');
-    $title_color          = get_theme_mod('servicos_section_title_color', '#ffffff');
-    $subtitle_color       = get_theme_mod('servicos_section_subtitle_color', '#e9ecef');
-    $card_bg_color        = get_theme_mod('servicos_card_bg_color', '#ffffff');
-    $card_text_color      = get_theme_mod('servicos_card_text_color', '#111111');
-    $footer_cta_enabled   = get_theme_mod('servicos_footer_cta_enabled', false);
-    $footer_cta_title     = get_theme_mod('servicos_footer_cta_title', 'Veja todos os nossos serviços');
-    $footer_cta_subtitle  = get_theme_mod('servicos_footer_cta_subtitle', 'Conheça a lista completa de soluções organizadas por categorias.');
-    $footer_cta_btn_text  = get_theme_mod('servicos_footer_cta_button_text', 'Ver todos os serviços');
-    $footer_cta_btn_link  = chaveiro_get_servicos_archive_url();
+    $titulo              = get_theme_mod('servicos_section_titulo', 'Nossos Principais Serviços');
+    $subtitulo           = get_theme_mod('servicos_section_subtitulo', 'Atendimento profissional, rápido e seguro.');
+    $bg_type             = get_theme_mod('servicos_section_bg_type', 'color');
+    $bg_color_1          = get_theme_mod('servicos_section_bg_color', '#0A2540');
+    $bg_color_2          = get_theme_mod('servicos_section_bg_color_2', '#007BFF');
+    $bg_image_value      = get_theme_mod('servicos_section_bg_image', '');
+    $bg_image            = chaveiro_servicos_get_background_image_url($bg_image_value);
+    $overlay             = get_theme_mod('servicos_section_overlay', 'rgba(0,0,0,0.45)');
+    $bg_blur             = chaveiro_servicos_sanitize_blur(get_theme_mod('servicos_section_bg_blur', 0));
+    $text_color          = get_theme_mod('servicos_section_text_color', '#ffffff');
+    $title_color         = get_theme_mod('servicos_section_title_color', '#ffffff');
+    $subtitle_color      = get_theme_mod('servicos_section_subtitle_color', '#e9ecef');
+    $card_bg_color       = get_theme_mod('servicos_card_bg_color', '#ffffff');
+    $card_text_color     = get_theme_mod('servicos_card_text_color', '#111111');
+    $footer_cta_enabled  = get_theme_mod('servicos_footer_cta_enabled', false);
+    $footer_cta_title    = get_theme_mod('servicos_footer_cta_title', 'Veja todos os nossos serviços');
+    $footer_cta_subtitle = get_theme_mod('servicos_footer_cta_subtitle', 'Conheça a lista completa de soluções organizadas por categorias.');
+    $footer_cta_btn_text = get_theme_mod('servicos_footer_cta_button_text', 'Ver todos os serviços');
+    $footer_cta_btn_link = chaveiro_get_servicos_archive_url();
 
     $section_style = '';
     $use_image_bg  = false;
@@ -659,7 +673,7 @@ function chaveiro_render_servicos()
     } elseif ($bg_type === 'gradient') {
         $section_style = 'background: linear-gradient(135deg, ' . esc_attr($bg_color_1) . ', ' . esc_attr($bg_color_2) . ');';
     } elseif ($bg_type === 'image' && !empty($bg_image)) {
-        $use_image_bg = true;
+        $use_image_bg  = true;
         $section_style = 'background:' . esc_attr($bg_color_1) . ';';
     } elseif ($bg_type === 'image' && empty($bg_image)) {
         $section_style = 'background:' . esc_attr($bg_color_1) . ';';
@@ -825,7 +839,7 @@ function chaveiro_render_servicos_archive_content($custom_query = null)
                             <div class="servico-single-card">
                                 <?php
                                 $subtitulo = get_post_meta(get_the_ID(), '_servico_subtitulo', true);
-                                $resumo    = get_post_meta(get_the_ID(), '_servico_resumo', true);
+                                $resumo    = chaveiro_servicos_get_resumo_curto(get_the_ID());
                                 $terms     = get_the_terms(get_the_ID(), 'categoria_servico');
                                 ?>
 
