@@ -1,0 +1,111 @@
+/* ==============================
+WHATSAPP
+============================== */
+
+.whatsapp-float {
+    position: fixed;
+    right: 20px;
+    bottom: 96px;
+    z-index: 9998;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    background: #25d366;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: 0 12px 28px rgba(37, 211, 102, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.whatsapp-float:hover {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 34px rgba(37, 211, 102, 0.42);
+}
+
+.whatsapp-float-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.whatsapp-float-icon i,
+.whatsapp-footer-btn i {
+    font-size: 18px;
+    line-height: 1;
+    margin-right: 0;
+    color: #ffffff;
+    vertical-align: middle;
+}
+
+.whatsapp-float-text {
+    line-height: 1;
+}
+
+.whatsapp-footer-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9997;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 -6px 22px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+}
+
+.whatsapp-footer-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: #25d366;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(37, 211, 102, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.whatsapp-footer-btn:hover {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(37, 211, 102, 0.36);
+}
+
+/* ==============================
+RESPONSIVO
+============================== */
+
+@media (min-width: 992px) {
+    .whatsapp-footer-bar {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .whatsapp-float {
+        right: 14px;
+        bottom: 96px;
+        padding: 11px 14px;
+    }
+
+    .whatsapp-float-text {
+        display: none;
+    }
+
+    .whatsapp-float-icon {
+        width: 38px;
+        height: 38px;
+    }
+}
