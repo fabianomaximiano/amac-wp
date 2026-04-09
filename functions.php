@@ -295,7 +295,7 @@ require_once get_template_directory() . '/inc/menu-estilo.php';
 function chaveiro_register_theme_image_sizes()
 {
     add_image_size('hero_desktop', 1920, 900, true);
-    add_image_size('hero_mobile', 768, 1100, true);
+    add_image_size('hero_mobile', 700, 400, true);
     add_image_size('sobre_quadrado', 400, 400, true);
     add_image_size('servico_card', 900, 620, true);
     add_image_size('produto_card', 900, 620, true);
