@@ -421,12 +421,20 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    wp_enqueue_style(
-        'bootstrap-4',
-        'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css',
-        array(),
-        '4.6.2'
-    );
+    // ==============================
+    // BOOTSTRAP CUSTOM LOCAL
+    // ==============================
+
+    $bootstrap_custom_path = get_template_directory() . '/assets/css/bootstrap-custom.min.css';
+
+    if (file_exists($bootstrap_custom_path)) {
+        wp_enqueue_style(
+            'bootstrap-custom',
+            get_template_directory_uri() . '/assets/css/bootstrap-custom.min.css',
+            array(),
+            filemtime($bootstrap_custom_path)
+        );
+    }
 
     wp_enqueue_style(
         'font-awesome',
@@ -438,7 +446,7 @@ function chaveiro_enqueue_assets()
     wp_enqueue_style(
         'chaveiro-style',
         get_stylesheet_uri(),
-        array('bootstrap-4', 'font-awesome'),
+        array('bootstrap-custom', 'font-awesome'),
         file_exists(get_stylesheet_directory() . '/style.css')
             ? filemtime(get_stylesheet_directory() . '/style.css')
             : $theme_version

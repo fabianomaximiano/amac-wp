@@ -10,12 +10,12 @@ Regra principal: NÃO alterar visual nem estrutura do layout
 
 Antes de iniciar os ajustes:
 
-[ ] Criar branch dedicada
+[x] Criar branch dedicada
 
 git checkout -b pagespeed-ajustes
 
-[ ] Executar Pagespeed Mobile
-[ ] Registrar score inicial
+[ ] Executar Pagespeed Mobile  
+[ ] Registrar score inicial  
 [ ] Registrar métricas:
 
 Score Mobile Inicial: ______  
@@ -39,18 +39,18 @@ Objetivo: Identificar o que realmente está sendo usado.
 F12 → Coverage  
 Ctrl + Shift + R  
 
-[ ] Exportar lista CSS usada
-[ ] Identificar arquivos com maior desperdício
+[ ] Exportar lista CSS usada  
+[ ] Identificar arquivos com maior desperdício  
 
 Arquivos esperados:
 
 [ ] bootstrap.css  
-[ ] style.css  
-[ ] menu.css  
-[ ] hero.css  
-[ ] servicos.css  
-[ ] footer-config.css  
-[ ] outros CSS carregados  
+[x] style.css  
+[x] menu.css  
+[x] hero.css  
+[x] servicos.css  
+[x] footer-config.css  
+[x] outros CSS carregados  
 
 ---
 
@@ -61,7 +61,7 @@ Arquivos esperados:
 
 Arquivos esperados:
 
-[ ] script.js  
+[x] script.js  
 [ ] bootstrap.js  
 [ ] plugins externos  
 [ ] scripts duplicados  
@@ -78,20 +78,20 @@ Objetivo: Limpar e organizar o CSS principal.
 
 Organizar style.css em blocos:
 
-[ ] BASE  
+[x] BASE  
 [ ] LAYOUT  
 [ ] COMPONENTES  
 [ ] PÁGINAS  
-[ ] UTILITÁRIOS  
+[x] UTILITÁRIOS  
 
 ---
 
 ## Limpeza
 
-[ ] Remover CSS duplicado  
-[ ] Remover CSS não utilizado  
-[ ] Remover regras antigas  
-[ ] Garantir que nenhuma mudança visual ocorra  
+[x] Remover CSS duplicado  
+[x] Remover CSS não utilizado  
+[x] Remover regras antigas  
+[x] Garantir que nenhuma mudança visual ocorra  
 
 Arquivo afetado:
 
@@ -110,6 +110,8 @@ Objetivo: Reduzir tamanho do Bootstrap carregado.
 Criar:
 
 assets/css/bootstrap-custom.css  
+
+[ ] Criar arquivo  
 
 ---
 
@@ -188,7 +190,7 @@ Objetivo: Melhorar carregamento no navegador.
 ## JavaScript
 
 [ ] Adicionar defer nos scripts  
-[ ] Garantir carregamento no footer  
+[x] Garantir carregamento no footer  
 [ ] Remover bloqueio de renderização  
 
 ---
@@ -203,7 +205,7 @@ Objetivo: Melhorar carregamento no navegador.
 
 ## Fontes
 
-[ ] Usar display=swap  
+[x] Usar display=swap  
 [ ] Reduzir famílias de fontes  
 [ ] Evitar múltiplas variações  
 
@@ -219,18 +221,18 @@ Objetivo: Reduzir peso apenas no mobile.
 
 Se existirem:
 
-[ ] autoplay no hero  
+[x] autoplay no hero  
 [ ] animações pesadas  
 [ ] scripts decorativos  
-[ ] efeitos visuais não essenciais  
+[x] efeitos visuais não essenciais  
 [ ] bibliotecas desnecessárias  
 
 ---
 
 ## Verificações
 
-[ ] Nenhuma alteração visual  
-[ ] Nenhuma quebra de layout  
+[x] Nenhuma alteração visual  
+[x] Nenhuma quebra de layout  
 
 ---
 
@@ -242,8 +244,8 @@ Objetivo: Melhorar Largest Contentful Paint.
 
 ## Hero
 
-[ ] Criar versão mobile da imagem  
-[ ] Usar WebP ou AVIF  
+[x] Criar versão mobile da imagem  
+[x] Usar WebP ou AVIF  
 [ ] Definir dimensões fixas  
 [ ] Aplicar preload  
 
@@ -252,7 +254,7 @@ Objetivo: Melhorar Largest Contentful Paint.
 ## Demais imagens
 
 [ ] Usar lazy loading  
-[ ] Converter para WebP  
+[x] Converter para WebP  
 [ ] Reduzir tamanho real  
 
 ---
@@ -315,18 +317,149 @@ Registrar cada alteração feita:
 
 ---
 
-Data: ______  
+# 🧾 HISTÓRICO DE AJUSTES
+
+Registrar cada alteração feita:
+
+---
+
+Data: 2026-04-09  
 
 Alteração:
 
-_________________________________
+Criação da branch dedicada para os ajustes de performance Pagespeed Mobile.
 
 Arquivo afetado:
 
-_________________________________
+Repositório / Git
 
 Resultado:
 
-_________________________________
+Ambiente isolado criado para realizar otimizações sem afetar a branch principal.
+
+---
+
+Data: 2026-04-09  
+
+Alteração:
+
+Reorganização do CSS principal, separando responsabilidades e removendo regras duplicadas do style.css.
+
+Arquivo afetado:
+
+assets/css/style.css  
+
+Resultado:
+
+Arquivo base mais enxuto e preparado para carregamento modular.
+
+---
+
+Data: 2026-04-09  
+
+Alteração:
+
+Separação dos estilos específicos em arquivos dedicados: hero.css, modal.css, whatsapp.css e kanban.css.
+
+Arquivo afetado:
+
+assets/css/hero.css  
+assets/css/modal.css  
+assets/css/whatsapp.css  
+assets/css/kanban.css  
+
+Resultado:
+
+CSS modularizado, facilitando manutenção e permitindo carregamento condicional por contexto.
+
+---
+
+Data: 2026-04-09  
+
+Alteração:
+
+Revisão e organização dos CSS de menu, serviços, produtos, FAQ, avaliações, sobre e rodapé.
+
+Arquivo afetado:
+
+assets/css/menu.css  
+assets/css/menu-estilo.css  
+assets/css/servicos.css  
+assets/css/produtos.css  
+assets/css/faq.css  
+assets/css/avaliacoes.css  
+assets/css/sobre.css  
+assets/css/footer-config.css  
+
+Resultado:
+
+Padronização estrutural dos estilos e preparação para otimização seletiva.
+
+---
+
+Data: 2026-04-10  
+
+Alteração:
+
+Atualização do functions.php para carregar CSS de forma condicional por contexto (home, serviços, produtos).
+
+Arquivo afetado:
+
+functions.php  
+
+Resultado:
+
+Redução do carregamento de CSS desnecessário fora dos contextos onde são usados.
+
+---
+
+Data: 2026-04-10  
+
+Alteração:
+
+Separação do JavaScript em arquivos independentes por responsabilidade.
+
+Arquivo afetado:
+
+assets/js/script.js  
+assets/js/modal.js  
+assets/js/hero.js  
+assets/js/kanban.js  
+
+Resultado:
+
+Scripts modularizados e preparados para carregamento seletivo.
+
+---
+
+Data: 2026-04-10  
+
+Alteração:
+
+Atualização do functions.php para controle de carregamento de scripts por contexto.
+
+Arquivo afetado:
+
+functions.php  
+
+Resultado:
+
+hero.js passou a carregar apenas na Home e modal.js permaneceu global.
+
+---
+
+Data: 2026-04-10  
+
+Alteração:
+
+Bloqueio do carrossel no mobile, removendo controles e exibindo apenas a primeira imagem.
+
+Arquivo afetado:
+
+assets/js/hero.js  
+
+Resultado:
+
+Redução de processamento no mobile e melhora potencial no LCP.
 
 ---

@@ -1,0 +1,28 @@
+// ==============================
+// BOOTSTRAP CUSTOM 4.6.2
+// Versão enxuta para o projeto
+// ==============================
+
+// Required
+@import "functions";
+@import "variables";
+@import "mixins";
+
+// Base
+@import "root";
+@import "reboot";
+@import "type";
+@import "images";
+
+// Layout
+@import "grid";
+
+// Components necessários
+@import "forms";
+@import "buttons";
+@import "transitions";
+@import "navbar";
+@import "carousel";
+
+// Utilities
+@import "utilities";
