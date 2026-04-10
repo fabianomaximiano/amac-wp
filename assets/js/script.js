@@ -1,385 +1,152 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    // MODAL ATENDIMENTO
-    var modal = document.getElementById("modalAtendimento");
-    var abrir = document.getElementById("abrirModal");
-    var fechar = document.querySelector(".fechar");
-
-    function fecharModal() {
-        if (modal) {
-            modal.style.display = "none";
-            document.body.classList.remove("modal-open");
-        }
-    }
-
-    if (abrir && modal && fechar) {
-        abrir.addEventListener("click", function () {
-            modal.style.display = "block";
-            document.body.classList.add("modal-open");
-        });
-
-        fechar.addEventListener("click", fecharModal);
-
-        window.addEventListener("click", function (e) {
-            if (e.target === modal) {
-                fecharModal();
-            }
-        });
-
-        document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape" && modal.style.display === "block") {
-                fecharModal();
-            }
-        });
-    }
-
-    var origemInput = document.getElementById("url_origem");
-    if (origemInput) {
-        origemInput.value = window.location.href;
-    }
-
-    // MÁSCARA TELEFONE
-    document.querySelectorAll(".telefone").forEach(function (input) {
-        input.addEventListener("input", function () {
-            this.value = this.value
-                .replace(/\D/g, "")
-                .replace(/(\d{2})(\d)/, "($1) $2")
-                .replace(/(\d{5})(\d)/, "$1-$2")
-                .replace(/(-\d{4})\d+?$/, "$1");
-        });
-    });
-
-    // MÁSCARA CEP + AUTOPREENCHIMENTO
-    document.querySelectorAll(".cep").forEach(function (input) {
-        input.addEventListener("input", function () {
-            this.value = this.value
-                .replace(/\D/g, "")
-                .replace(/^(\d{5})(\d)/, "$1-$2")
-                .replace(/(-\d{3})\d+?$/, "$1");
-        });
-
-        input.addEventListener("blur", function () {
-            var cep = this.value.replace(/\D/g, "");
-            var cidadeInput = document.getElementById("lead_cidade");
-            var bairroInput = document.getElementById("lead_bairro");
-
-            if (!cidadeInput || !bairroInput) {
-                return;
-            }
-
-            if (cep.length !== 8) {
-                return;
-            }
-
-            cidadeInput.value = "Carregando...";
-            bairroInput.value = "Carregando...";
-
-            fetch("https://viacep.com.br/ws/" + cep + "/json/")
-                .then(function (response) {
-                    if (!response.ok) {
-                        throw new Error("Falha ao consultar CEP.");
-                    }
-                    return response.json();
-                })
-                .then(function (data) {
-                    if (data.erro) {
-                        cidadeInput.value = "";
-                        bairroInput.value = "";
-                        return;
-                    }
-
-                    cidadeInput.value = data.localidade || "";
-                    bairroInput.value = data.bairro || "";
-                })
-                .catch(function () {
-                    cidadeInput.value = "";
-                    bairroInput.value = "";
-                    console.log("Não foi possível consultar o CEP.");
-                });
-        });
-    });
-
-    // AJAX FORM LEAD
-    var form = document.getElementById("leadForm");
-
-    if (form) {
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            var msgBox = document.getElementById("msg");
-            var submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-            var textoOriginalBotao = submitBtn ? submitBtn.innerHTML : "";
-
-            if (msgBox) {
-                msgBox.className = "";
-                msgBox.innerHTML = "Enviando solicitação...";
-            }
-
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = "Enviando...";
-            }
-
-            var formData = new FormData(this);
-            formData.append("action", "salvar_lead");
-
-            fetch(ajax_object.ajax_url, {
-                method: "POST",
-                body: formData
-            })
-                .then(async function (res) {
-                    var raw = await res.text();
-
-                    if (!res.ok) {
-                        throw new Error("HTTP " + res.status + " - " + raw);
-                    }
-
-                    try {
-                        return JSON.parse(raw);
-                    } catch (error) {
-                        throw new Error("Resposta inválida do servidor.");
-                    }
-                })
-                .then(function (data) {
-                    if (!msgBox) {
-                        return;
-                    }
-
-                    if (data && data.success && data.data) {
-                        msgBox.className = "form-message form-message-success";
-
-                        var mensagem = data.data.msg || "Solicitação enviada com sucesso.";
-
-                        if (data.data.email_enviado) {
-                            mensagem += "<br><small>E-mail enviado com sucesso para o atendimento.</small>";
-                        } else {
-                            mensagem += "<br><small>Seu pedido foi salvo. O atendimento ainda pode seguir normalmente pelo site.</small>";
-                        }
-
-                        msgBox.innerHTML = mensagem;
-
-                        form.reset();
-
-                        var origemInputReset = document.getElementById("url_origem");
-                        if (origemInputReset) {
-                            origemInputReset.value = window.location.href;
-                        }
-                    } else {
-                        msgBox.className = "form-message form-message-error";
-                        msgBox.innerHTML = (data && data.data && data.data.msg)
-                            ? data.data.msg
-                            : "Não foi possível enviar sua solicitação. Tente novamente.";
-                    }
-                })
-                .catch(function () {
-                    if (msgBox) {
-                        msgBox.className = "form-message form-message-error";
-                        msgBox.innerHTML = "Não foi possível enviar agora. Verifique sua conexão e tente novamente.";
-                    }
-                })
-                .finally(function () {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = textoOriginalBotao;
-                    }
-                });
-        });
-    }
-
-    // TRACKING WHATSAPP
-    document.querySelectorAll(".whatsapp-btn, .header-whatsapp-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            if (typeof fbq !== "undefined") {
-                fbq("track", "Lead");
-            }
-
-            if (typeof gtag !== "undefined") {
-                gtag("event", "conversion", {
-                    event_category: "whatsapp",
-                    event_label: "click"
-                });
-            }
-        });
-    });
-
+    // ==============================
     // MENU SCROLL
+    // ==============================
+
     var navbar = document.querySelector(".navbar");
 
     function toggleNavbarScrolled() {
+
         if (!navbar) return;
 
         if (window.scrollY > 50) {
+
             navbar.classList.add("scrolled");
+
         } else {
+
             navbar.classList.remove("scrolled");
+
         }
+
     }
 
     toggleNavbarScrolled();
+
     window.addEventListener("scroll", toggleNavbarScrolled);
 
+
+
+    // ==============================
     // SCROLL SPY
+    // ==============================
+
     var sections = document.querySelectorAll("section[id]");
     var navLinks = document.querySelectorAll(".navbar-nav .menu-item a, .navbar-nav .nav-link");
 
     function setActiveMenuLink() {
+
+        if (!sections.length || !navLinks.length) return;
+
         var currentId = "";
 
         sections.forEach(function (section) {
+
             var sectionTop = section.offsetTop - 120;
             var sectionHeight = section.offsetHeight;
 
-            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+            if (
+                window.scrollY >= sectionTop &&
+                window.scrollY < sectionTop + sectionHeight
+            ) {
+
                 currentId = section.getAttribute("id");
+
             }
+
         });
 
         navLinks.forEach(function (link) {
+
             link.classList.remove("active");
 
             var href = link.getAttribute("href");
-            if (href && href.charAt(0) === "#" && href.substring(1) === currentId) {
+
+            if (
+                href &&
+                href.charAt(0) === "#" &&
+                href.substring(1) === currentId
+            ) {
+
                 link.classList.add("active");
+
             }
+
         });
+
     }
 
     setActiveMenuLink();
+
     window.addEventListener("scroll", setActiveMenuLink);
 
-    // STATUS DO LEAD
-    document.addEventListener("change", function (e) {
-        if (!e.target.classList.contains("status-change")) return;
 
-        var id = e.target.dataset.id;
-        var status = e.target.value;
 
-        var formData = new FormData();
-        formData.append("action", "update_lead_status");
-        formData.append("id", id);
-        formData.append("status", status);
+    // ==============================
+    // TRACKING WHATSAPP
+    // ==============================
 
-        fetch(ajax_object.ajax_url, {
-            method: "POST",
-            body: formData
-        }).catch(function () {
-            console.log("Erro ao atualizar status do lead.");
-        });
-    });
+    document.querySelectorAll(".whatsapp-btn, .header-whatsapp-btn")
+        .forEach(function (btn) {
 
-    // PRESETS DE CORES
-    document.querySelectorAll(".preset-btn").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            var preset = this.dataset.preset;
+            btn.addEventListener("click", function () {
 
-            var formData = new FormData();
-            formData.append("action", "apply_preset");
-            formData.append("preset", preset);
+                if (typeof fbq !== "undefined") {
 
-            fetch(ajax_object.ajax_url, {
-                method: "POST",
-                body: formData
-            })
-                .then(function (res) {
-                    return res.json();
-                })
-                .then(function () {
-                    location.reload();
-                });
-        });
-    });
+                    fbq("track", "Lead");
 
-    // KANBAN
-    var cards = document.querySelectorAll(".kanban-card");
-    var columns = document.querySelectorAll(".kanban-column");
+                }
 
-    cards.forEach(function (card) {
-        card.addEventListener("dragstart", function () {
-            card.classList.add("dragging");
-        });
+                if (typeof gtag !== "undefined") {
 
-        card.addEventListener("dragend", function () {
-            card.classList.remove("dragging");
-        });
-    });
+                    gtag("event", "conversion", {
+                        event_category: "whatsapp",
+                        event_label: "click"
+                    });
 
-    columns.forEach(function (column) {
-        column.addEventListener("dragover", function (e) {
-            e.preventDefault();
-            var dragging = document.querySelector(".kanban-card.dragging");
-            if (dragging) {
-                column.appendChild(dragging);
-            }
-        });
+                }
 
-        column.addEventListener("drop", function () {
-            var card = document.querySelector(".kanban-card.dragging");
-            if (!card) return;
-
-            var id = card.dataset.id;
-            var status = column.dataset.status;
-
-            var formData = new FormData();
-            formData.append("action", "update_lead_status");
-            formData.append("id", id);
-            formData.append("status", status);
-
-            fetch(ajax_object.ajax_url, {
-                method: "POST",
-                body: formData
-            }).catch(function () {
-                console.log("Erro ao mover card no kanban.");
             });
-        });
-    });
 
-    // HERO BG RESPONSIVO
-    function updateHeroBackgrounds() {
-        var slides = document.querySelectorAll(".hero-slide");
-        var isMobile = window.innerWidth <= 767.98;
-
-        slides.forEach(function (slide) {
-            var desktopBg = slide.getAttribute("data-desktop-bg");
-            var mobileBg = slide.getAttribute("data-mobile-bg");
-            var imageToUse = isMobile && mobileBg ? mobileBg : desktopBg;
-
-            if (imageToUse) {
-                slide.style.backgroundImage = "url('" + imageToUse + "')";
-            }
-        });
-    }
-
-    updateHeroBackgrounds();
-    window.addEventListener("resize", updateHeroBackgrounds);
-
-    // HERO CAROUSEL
-    var heroCarousel = document.getElementById("heroCarousel");
-
-    if (heroCarousel && typeof jQuery !== "undefined" && typeof jQuery(heroCarousel).carousel === "function") {
-        jQuery(heroCarousel).carousel({
-            interval: 5000,
-            pause: false,
-            ride: "carousel",
-            wrap: true,
-            keyboard: true
         });
 
-        jQuery(heroCarousel).find(".carousel-control-prev").on("click", function (e) {
-            e.preventDefault();
-            jQuery(heroCarousel).carousel("prev");
-        });
 
-        jQuery(heroCarousel).find(".carousel-control-next").on("click", function (e) {
-            e.preventDefault();
-            jQuery(heroCarousel).carousel("next");
-        });
 
-        jQuery(heroCarousel).find(".carousel-indicators li").on("click", function () {
-            var slideTo = jQuery(this).attr("data-slide-to");
-            if (typeof slideTo !== "undefined") {
-                jQuery(heroCarousel).carousel(parseInt(slideTo, 10));
-            }
+    // ==============================
+    // PRESETS DE CORES
+    // ==============================
+
+    document.querySelectorAll(".preset-btn")
+        .forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                if (
+                    typeof ajax_object === "undefined" ||
+                    !ajax_object.ajax_url
+                ) return;
+
+                var preset = this.dataset.preset;
+
+                var formData = new FormData();
+
+                formData.append("action", "apply_preset");
+                formData.append("preset", preset);
+
+                fetch(ajax_object.ajax_url, {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(function (res) {
+                        return res.json();
+                    })
+                    .then(function () {
+                        location.reload();
+                    });
+
+            });
+
         });
-    }
 
 });

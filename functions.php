@@ -312,7 +312,7 @@ function chaveiro_convert_uploads_to_webp($formats)
 add_filter('image_editor_output_format', 'chaveiro_convert_uploads_to_webp');
 
 // ==============================
-// RETORNAR ARQUIVO JS DO TEMA
+// HELPERS DE ASSETS JS
 // ==============================
 function chaveiro_get_theme_script_asset()
 {
@@ -334,6 +334,20 @@ function chaveiro_get_theme_script_asset()
     }
 
     return false;
+}
+
+function chaveiro_get_named_script_asset($relative_path)
+{
+    $absolute_path = get_template_directory() . $relative_path;
+
+    if (!file_exists($absolute_path)) {
+        return false;
+    }
+
+    return array(
+        'uri'     => get_template_directory_uri() . $relative_path,
+        'version' => filemtime($absolute_path),
+    );
 }
 
 // ==============================
@@ -379,7 +393,11 @@ function chaveiro_google_fonts_url()
 function chaveiro_enqueue_assets()
 {
     $theme_version = wp_get_theme()->get('Version');
-    $script_asset  = chaveiro_get_theme_script_asset();
+
+    $core_script_asset  = chaveiro_get_theme_script_asset();
+    $modal_script_asset = chaveiro_get_named_script_asset('/assets/js/modal.js');
+    $hero_script_asset  = chaveiro_get_named_script_asset('/assets/js/hero.js');
+    $kanban_script_asset = chaveiro_get_named_script_asset('/assets/js/kanban.js');
 
     $is_home_context = is_front_page() || is_home();
 
@@ -580,17 +598,67 @@ function chaveiro_enqueue_assets()
         true
     );
 
-    if ($script_asset) {
+    // Core global
+    if ($core_script_asset) {
         wp_enqueue_script(
             'chaveiro-scripts',
-            $script_asset['uri'],
+            $core_script_asset['uri'],
             array('jquery', 'bootstrap-4-bundle'),
-            $script_asset['version'],
+            $core_script_asset['version'],
             true
         );
 
         wp_localize_script(
             'chaveiro-scripts',
+            'ajax_object',
+            array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+            )
+        );
+    }
+
+    // Global: o formulário do menu depende disso em todo o site.
+    if ($modal_script_asset) {
+        wp_enqueue_script(
+            'chaveiro-modal-script',
+            $modal_script_asset['uri'],
+            array('jquery', 'bootstrap-4-bundle'),
+            $modal_script_asset['version'],
+            true
+        );
+
+        wp_localize_script(
+            'chaveiro-modal-script',
+            'ajax_object',
+            array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+            )
+        );
+    }
+
+    // Home only
+    if ($is_home_context && $hero_script_asset) {
+        wp_enqueue_script(
+            'chaveiro-hero-script',
+            $hero_script_asset['uri'],
+            array('jquery', 'bootstrap-4-bundle'),
+            $hero_script_asset['version'],
+            true
+        );
+    }
+
+    // Mantido global por segurança até definirmos o contexto exato de uso.
+    if ($kanban_script_asset) {
+        wp_enqueue_script(
+            'chaveiro-kanban-script',
+            $kanban_script_asset['uri'],
+            array('jquery'),
+            $kanban_script_asset['version'],
+            true
+        );
+
+        wp_localize_script(
+            'chaveiro-kanban-script',
             'ajax_object',
             array(
                 'ajax_url' => admin_url('admin-ajax.php'),
