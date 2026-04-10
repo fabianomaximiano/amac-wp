@@ -381,6 +381,18 @@ function chaveiro_enqueue_assets()
     $theme_version = wp_get_theme()->get('Version');
     $script_asset  = chaveiro_get_theme_script_asset();
 
+    $is_home_context = is_front_page() || is_home();
+
+    $is_servicos_context = $is_home_context
+        || is_post_type_archive('servicos')
+        || is_singular('servicos')
+        || is_tax(array('categoria_servicos', 'servicos_categoria', 'servicos-categoria'));
+
+    $is_produtos_context = $is_home_context
+        || is_post_type_archive('produtos')
+        || is_singular('produtos')
+        || is_tax(array('categoria_produtos', 'produtos_categoria', 'produtos-categoria'));
+
     $google_fonts_url = chaveiro_google_fonts_url();
     if (!empty($google_fonts_url)) {
         wp_enqueue_style(
@@ -414,6 +426,8 @@ function chaveiro_enqueue_assets()
             : $theme_version
     );
 
+    $base_style_handle = 'chaveiro-style';
+
     $assets_css_path = get_template_directory() . '/assets/css/style.css';
     if (file_exists($assets_css_path)) {
         wp_enqueue_style(
@@ -422,6 +436,8 @@ function chaveiro_enqueue_assets()
             array('chaveiro-style'),
             filemtime($assets_css_path)
         );
+
+        $base_style_handle = 'chaveiro-assets-style';
     }
 
     $menu_css_path = get_template_directory() . '/assets/css/menu.css';
@@ -429,7 +445,7 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-menu',
             get_template_directory_uri() . '/assets/css/menu.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($menu_css_path)
         );
     }
@@ -444,102 +460,112 @@ function chaveiro_enqueue_assets()
         );
     }
 
+    // Global: o modal é usado pelo formulário do menu em todo o site.
     $modal_css_path = get_template_directory() . '/assets/css/modal.css';
     if (file_exists($modal_css_path)) {
         wp_enqueue_style(
             'chaveiro-modal',
             get_template_directory_uri() . '/assets/css/modal.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($modal_css_path)
         );
     }
 
+    // Global: WhatsApp flutuante e barra mobile podem aparecer em todo o site.
     $whatsapp_css_path = get_template_directory() . '/assets/css/whatsapp.css';
     if (file_exists($whatsapp_css_path)) {
         wp_enqueue_style(
             'chaveiro-whatsapp',
             get_template_directory_uri() . '/assets/css/whatsapp.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($whatsapp_css_path)
         );
     }
 
+    // Home only
     $hero_css_path = get_template_directory() . '/assets/css/hero.css';
-    if (file_exists($hero_css_path)) {
+    if ($is_home_context && file_exists($hero_css_path)) {
         wp_enqueue_style(
             'chaveiro-hero',
             get_template_directory_uri() . '/assets/css/hero.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($hero_css_path)
         );
     }
 
+    // Home only
     $sobre_css_path = get_template_directory() . '/assets/css/sobre.css';
-    if (file_exists($sobre_css_path)) {
+    if ($is_home_context && file_exists($sobre_css_path)) {
         wp_enqueue_style(
             'chaveiro-sobre',
             get_template_directory_uri() . '/assets/css/sobre.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($sobre_css_path)
         );
     }
 
+    // Home + contexto de serviços
     $servicos_css_path = get_template_directory() . '/assets/css/servicos.css';
-    if (file_exists($servicos_css_path)) {
+    if ($is_servicos_context && file_exists($servicos_css_path)) {
         wp_enqueue_style(
             'chaveiro-servicos',
             get_template_directory_uri() . '/assets/css/servicos.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($servicos_css_path)
         );
     }
 
+    // Home + contexto de produtos
     $produtos_css_path = get_template_directory() . '/assets/css/produtos.css';
-    if (file_exists($produtos_css_path)) {
+    if ($is_produtos_context && file_exists($produtos_css_path)) {
         wp_enqueue_style(
             'chaveiro-produtos',
             get_template_directory_uri() . '/assets/css/produtos.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($produtos_css_path)
         );
     }
 
+    // Home only
     $faq_css_path = get_template_directory() . '/assets/css/faq.css';
-    if (file_exists($faq_css_path)) {
+    if ($is_home_context && file_exists($faq_css_path)) {
         wp_enqueue_style(
             'chaveiro-faq',
             get_template_directory_uri() . '/assets/css/faq.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($faq_css_path)
         );
     }
 
+    // Global
     $footer_css_path = get_template_directory() . '/assets/css/footer-config.css';
     if (file_exists($footer_css_path)) {
         wp_enqueue_style(
             'chaveiro-footer-config',
             get_template_directory_uri() . '/assets/css/footer-config.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($footer_css_path)
         );
     }
 
+    // Home only
     $avaliacoes_css_path = get_template_directory() . '/assets/css/avaliacoes.css';
-    if (file_exists($avaliacoes_css_path)) {
+    if ($is_home_context && file_exists($avaliacoes_css_path)) {
         wp_enqueue_style(
             'chaveiro-avaliacoes',
             get_template_directory_uri() . '/assets/css/avaliacoes.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($avaliacoes_css_path)
         );
     }
 
+    // Mantido global por segurança até definirmos o contexto exato de uso.
     $kanban_css_path = get_template_directory() . '/assets/css/kanban.css';
     if (file_exists($kanban_css_path)) {
         wp_enqueue_style(
             'chaveiro-kanban',
             get_template_directory_uri() . '/assets/css/kanban.css',
-            array('chaveiro-assets-style'),
+            array($base_style_handle),
             filemtime($kanban_css_path)
         );
     }
