@@ -319,6 +319,7 @@ function chaveiro_get_theme_script_asset()
     $candidates = array(
         '/assets/js/scripts.js',
         '/assets/js/script.js',
+        '/script.js',
     );
 
     foreach ($candidates as $candidate) {
@@ -413,16 +414,6 @@ function chaveiro_enqueue_assets()
             : $theme_version
     );
 
-    $menu_css_path = get_template_directory() . '/assets/css/menu.css';
-    if (file_exists($menu_css_path)) {
-        wp_enqueue_style(
-            'chaveiro-menu',
-            get_template_directory_uri() . '/assets/css/menu.css',
-            array('chaveiro-style'),
-            filemtime($menu_css_path)
-        );
-    }
-
     $assets_css_path = get_template_directory() . '/assets/css/style.css';
     if (file_exists($assets_css_path)) {
         wp_enqueue_style(
@@ -433,12 +424,52 @@ function chaveiro_enqueue_assets()
         );
     }
 
+    $menu_css_path = get_template_directory() . '/assets/css/menu.css';
+    if (file_exists($menu_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-menu',
+            get_template_directory_uri() . '/assets/css/menu.css',
+            array('chaveiro-assets-style'),
+            filemtime($menu_css_path)
+        );
+    }
+
+    $menu_estilo_css_path = get_template_directory() . '/assets/css/menu-estilo.css';
+    if (file_exists($menu_estilo_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-menu-estilo',
+            get_template_directory_uri() . '/assets/css/menu-estilo.css',
+            array('chaveiro-menu'),
+            filemtime($menu_estilo_css_path)
+        );
+    }
+
+    $modal_css_path = get_template_directory() . '/assets/css/modal.css';
+    if (file_exists($modal_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-modal',
+            get_template_directory_uri() . '/assets/css/modal.css',
+            array('chaveiro-assets-style'),
+            filemtime($modal_css_path)
+        );
+    }
+
+    $whatsapp_css_path = get_template_directory() . '/assets/css/whatsapp.css';
+    if (file_exists($whatsapp_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-whatsapp',
+            get_template_directory_uri() . '/assets/css/whatsapp.css',
+            array('chaveiro-assets-style'),
+            filemtime($whatsapp_css_path)
+        );
+    }
+
     $hero_css_path = get_template_directory() . '/assets/css/hero.css';
     if (file_exists($hero_css_path)) {
         wp_enqueue_style(
             'chaveiro-hero',
             get_template_directory_uri() . '/assets/css/hero.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($hero_css_path)
         );
     }
@@ -448,7 +479,7 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-sobre',
             get_template_directory_uri() . '/assets/css/sobre.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($sobre_css_path)
         );
     }
@@ -458,7 +489,7 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-servicos',
             get_template_directory_uri() . '/assets/css/servicos.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($servicos_css_path)
         );
     }
@@ -468,7 +499,7 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-produtos',
             get_template_directory_uri() . '/assets/css/produtos.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($produtos_css_path)
         );
     }
@@ -478,7 +509,7 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-faq',
             get_template_directory_uri() . '/assets/css/faq.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($faq_css_path)
         );
     }
@@ -488,7 +519,7 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-footer-config',
             get_template_directory_uri() . '/assets/css/footer-config.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($footer_css_path)
         );
     }
@@ -498,8 +529,18 @@ function chaveiro_enqueue_assets()
         wp_enqueue_style(
             'chaveiro-avaliacoes',
             get_template_directory_uri() . '/assets/css/avaliacoes.css',
-            array('chaveiro-style'),
+            array('chaveiro-assets-style'),
             filemtime($avaliacoes_css_path)
+        );
+    }
+
+    $kanban_css_path = get_template_directory() . '/assets/css/kanban.css';
+    if (file_exists($kanban_css_path)) {
+        wp_enqueue_style(
+            'chaveiro-kanban',
+            get_template_directory_uri() . '/assets/css/kanban.css',
+            array('chaveiro-assets-style'),
+            filemtime($kanban_css_path)
         );
     }
 
@@ -522,9 +563,13 @@ function chaveiro_enqueue_assets()
             true
         );
 
-        wp_localize_script('chaveiro-scripts', 'ajax_object', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-        ));
+        wp_localize_script(
+            'chaveiro-scripts',
+            'ajax_object',
+            array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+            )
+        );
     }
 }
 add_action('wp_enqueue_scripts', 'chaveiro_enqueue_assets');
