@@ -1,5 +1,13 @@
 {
   "dependencies": {
     "bootstrap": "^4.6.2"
-  }
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "sass": "^1.77.0"
+  },
+ "scripts": {
+  "bootstrap": "sass assets/bootstrap-custom.scss assets/css/bootstrap-custom.min.css --style=compressed",
+  "minify:css": "cleancss -o assets/css/style.min.css assets/css/style.css && cleancss -o assets/css/menu.min.css assets/css/menu.css && cleancss -o assets/css/menu-estilo.min.css assets/css/menu-estilo.css && cleancss -o assets/css/hero.min.css assets/css/hero.css && cleancss -o assets/css/modal.min.css assets/css/modal.css && cleancss -o assets/css/servicos.min.css assets/css/servicos.css && cleancss -o assets/css/produtos.min.css assets/css/produtos.css && cleancss -o assets/css/faq.min.css assets/css/faq.css && cleancss -o assets/css/footer-config.min.css assets/css/footer-config.css && cleancss -o assets/css/whatsapp.min.css assets/css/whatsapp.css && cleancss -o assets/css/kanban.min.css assets/css/kanban.css && cleancss -o assets/css/avaliacoes.min.css assets/css/avaliacoes.css"
+}
 }
