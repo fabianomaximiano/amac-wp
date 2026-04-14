@@ -221,4 +221,145 @@ RESPONSIVO
         min-width: auto;
         text-align: center;
     }
+
+    /* MOBILE — HERO ESTÁTICO */
+
+    .hero-carousel .carousel-control-prev,
+    .hero-carousel .carousel-control-next,
+    .hero-carousel .carousel-indicators {
+        display: none !important;
+    }
+
+    .hero-carousel .carousel-inner {
+        transform: none !important;
+    }
+
+    .hero-carousel .carousel-item,
+    .carousel-fade .carousel-item,
+    .carousel-fade .carousel-item.active,
+    .carousel-fade .carousel-item-next,
+    .carousel-fade .carousel-item-prev,
+    .carousel-fade .active.carousel-item-left,
+    .carousel-fade .active.carousel-item-right {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+
+    .hero-carousel .carousel-item {
+        display: none;
+        opacity: 0;
+    }
+
+    .hero-carousel .carousel-item:first-child,
+    .hero-carousel .carousel-item:first-child.active {
+        display: block !important;
+        opacity: 1 !important;
+    }
+}
+
+/* ==============================
+MOBILE — HERO SEM TRANSIÇÃO
+============================== */
+
+@media (max-width: 767.98px) {
+
+    .carousel-fade .carousel-item {
+        transition: none !important;
+    }
+
+    .hero-carousel .carousel-control-prev,
+    .hero-carousel .carousel-control-next,
+    .hero-carousel .carousel-indicators {
+        display: none !important;
+    }
+
+}
+/* ==============================
+MOBILE — HERO ESTÁTICO
+============================== */
+
+@media (max-width: 767.98px) {
+    .hero-carousel .carousel-control-prev,
+    .hero-carousel .carousel-control-next,
+    .hero-carousel .carousel-indicators {
+        display: none !important;
+    }
+
+    .carousel-fade .carousel-item,
+    .carousel-fade .carousel-item.active,
+    .carousel-fade .carousel-item-next,
+    .carousel-fade .carousel-item-prev,
+    .carousel-fade .active.carousel-item-left,
+    .carousel-fade .active.carousel-item-right {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+
+    .hero-carousel .carousel-item {
+        display: none;
+        opacity: 0 !important;
+    }
+
+    .hero-carousel .carousel-item:first-child,
+    .hero-carousel .carousel-item:first-child.active {
+        display: block !important;
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero-carousel .carousel-control-prev,
+    .hero-carousel .carousel-control-next,
+    .hero-carousel .carousel-indicators {
+        display: none !important;
+    }
+
+    .carousel-fade .carousel-item,
+    .carousel-fade .carousel-item.active,
+    .carousel-fade .carousel-item-next,
+    .carousel-fade .carousel-item-prev,
+    .carousel-fade .active.carousel-item-left,
+    .carousel-fade .active.carousel-item-right {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    /* Remove transições */
+    .carousel-item {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    /* Esconde controles */
+    .carousel-control-prev,
+    .carousel-control-next,
+    .carousel-indicators {
+        display: none !important;
+    }
+
+}
+
+@media (max-width: 767.98px) {
+    .hero-carousel .carousel-control-prev,
+    .hero-carousel .carousel-control-next,
+    .hero-carousel .carousel-indicators {
+        display: none !important;
+    }
+
+    .carousel-fade .carousel-item,
+    .carousel-fade .carousel-item.active,
+    .carousel-fade .carousel-item-next,
+    .carousel-fade .carousel-item-prev,
+    .carousel-fade .active.carousel-item-left,
+    .carousel-fade .active.carousel-item-right {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
 }

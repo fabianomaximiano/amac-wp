@@ -76,19 +76,27 @@ function chaveiro_render_hero()
         }
 
         $slides[] = [
-            'index'      => $i,
-            'desktop'    => $desktop_image ?: $desktop_original,
-            'mobile'     => $mobile_image ?: ($desktop_image ?: $desktop_original),
-            'title'      => $title,
-            'sub'        => $sub,
-            'btn_text'   => $btn_text,
-            'btn_link'   => $btn_link,
-            'btn_color'  => $btn_color,
+            'index'     => $i,
+            'desktop'   => $desktop_image ?: $desktop_original,
+            'mobile'    => $mobile_image ?: ($desktop_image ?: $desktop_original),
+            'title'     => $title,
+            'sub'       => $sub,
+            'btn_text'  => $btn_text,
+            'btn_link'  => $btn_link,
+            'btn_color' => $btn_color,
         ];
     }
 
     if (empty($slides)) {
         return;
+    }
+
+    if (!empty($slides[0]['desktop'])) {
+        echo '<link rel="preload" as="image" href="' . esc_url($slides[0]['desktop']) . '" fetchpriority="high">';
+    }
+
+    if (!empty($slides[0]['mobile'])) {
+        echo '<link rel="preload" as="image" href="' . esc_url($slides[0]['mobile']) . '" media="(max-width: 767.98px)" fetchpriority="high">';
     }
     ?>
     <section class="hero-section">
@@ -107,37 +115,15 @@ function chaveiro_render_hero()
 
             <div class="carousel-inner">
                 <?php foreach ($slides as $index => $slide) : ?>
-                    <?php
-                    $button_colors = chaveiro_get_hero_button_colors($slide['btn_color']);
-                    ?>
-                    <style>
-                        .hero-slide-<?php echo esc_attr($slide['index']); ?> {
-                            background-image: url('<?php echo esc_url($slide['desktop']); ?>');
-                        }
-
-                        .hero-btn-slide-<?php echo esc_attr($slide['index']); ?> {
-                            background-color: <?php echo esc_html($button_colors['bg']); ?>;
-                            border-color: <?php echo esc_html($button_colors['bg']); ?>;
-                            color: <?php echo esc_html($button_colors['text']); ?>;
-                        }
-
-                        .hero-btn-slide-<?php echo esc_attr($slide['index']); ?>:hover,
-                        .hero-btn-slide-<?php echo esc_attr($slide['index']); ?>:focus {
-                            background-color: <?php echo esc_html($button_colors['hover']); ?>;
-                            border-color: <?php echo esc_html($button_colors['hover']); ?>;
-                            color: <?php echo esc_html($button_colors['text']); ?>;
-                            text-decoration: none;
-                        }
-
-                        @media (max-width: 767.98px) {
-                            .hero-slide-<?php echo esc_attr($slide['index']); ?> {
-                                background-image: url('<?php echo esc_url($slide['mobile']); ?>');
-                            }
-                        }
-                    </style>
+                    <?php $button_colors = chaveiro_get_hero_button_colors($slide['btn_color']); ?>
 
                     <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-                        <div class="hero-slide hero-slide-<?php echo esc_attr($slide['index']); ?>">
+                        <div
+                            class="hero-slide"
+                            style="background-image: url('<?php echo esc_url($slide['desktop']); ?>');"
+                            data-desktop-bg="<?php echo esc_url($slide['desktop']); ?>"
+                            data-mobile-bg="<?php echo esc_url($slide['mobile']); ?>"
+                        >
                             <div class="hero-overlay"></div>
 
                             <div class="hero-content-wrap">
@@ -158,10 +144,27 @@ function chaveiro_render_hero()
 
                                             <?php if ($slide['btn_link'] !== '' && $slide['btn_text'] !== '') : ?>
                                                 <div class="hero-actions">
-                                                    <a href="<?php echo esc_url($slide['btn_link']); ?>"
-                                                       class="btn hero-btn hero-btn-slide-<?php echo esc_attr($slide['index']); ?>"
-                                                       target="_blank"
-                                                       rel="noopener noreferrer">
+                                                    <a
+                                                        href="<?php echo esc_url($slide['btn_link']); ?>"
+                                                        class="btn hero-btn"
+                                                        style="
+                                                            background-color: <?php echo esc_attr($button_colors['bg']); ?>;
+                                                            border-color: <?php echo esc_attr($button_colors['bg']); ?>;
+                                                            color: <?php echo esc_attr($button_colors['text']); ?>;
+                                                        "
+                                                        onmouseover="
+                                                            this.style.backgroundColor='<?php echo esc_js($button_colors['hover']); ?>';
+                                                            this.style.borderColor='<?php echo esc_js($button_colors['hover']); ?>';
+                                                            this.style.color='<?php echo esc_js($button_colors['text']); ?>';
+                                                        "
+                                                        onmouseout="
+                                                            this.style.backgroundColor='<?php echo esc_js($button_colors['bg']); ?>';
+                                                            this.style.borderColor='<?php echo esc_js($button_colors['bg']); ?>';
+                                                            this.style.color='<?php echo esc_js($button_colors['text']); ?>';
+                                                        "
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
                                                         <span><?php echo esc_html($slide['btn_text']); ?></span>
                                                     </a>
                                                 </div>
@@ -172,6 +175,7 @@ function chaveiro_render_hero()
                             </div>
                         </div>
                     </div>
+
                 <?php endforeach; ?>
             </div>
 
