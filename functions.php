@@ -317,6 +317,9 @@ add_filter('image_editor_output_format', 'chaveiro_convert_uploads_to_webp');
 function chaveiro_get_theme_script_asset()
 {
     $candidates = array(
+        '/assets/js/scripts.min.js',
+        '/assets/js/script.min.js',
+        '/script.min.js',
         '/assets/js/scripts.js',
         '/assets/js/script.js',
         '/script.js',
@@ -338,16 +341,26 @@ function chaveiro_get_theme_script_asset()
 
 function chaveiro_get_named_script_asset($relative_path)
 {
-    $absolute_path = get_template_directory() . $relative_path;
+    $min_relative = str_replace('.js', '.min.js', $relative_path);
 
-    if (!file_exists($absolute_path)) {
-        return false;
+    $min_absolute = get_template_directory() . $min_relative;
+    $normal_absolute = get_template_directory() . $relative_path;
+
+    if (file_exists($min_absolute)) {
+        return array(
+            'uri'     => get_template_directory_uri() . $min_relative,
+            'version' => filemtime($min_absolute),
+        );
     }
 
-    return array(
-        'uri'     => get_template_directory_uri() . $relative_path,
-        'version' => filemtime($absolute_path),
-    );
+    if (file_exists($normal_absolute)) {
+        return array(
+            'uri'     => get_template_directory_uri() . $relative_path,
+            'version' => filemtime($normal_absolute),
+        );
+    }
+
+    return false;
 }
 
 function chaveiro_get_minified_css_asset($relative_path)
@@ -421,6 +434,10 @@ function chaveiro_enqueue_assets()
     $modal_script_asset  = chaveiro_get_named_script_asset('/assets/js/modal.js');
     $hero_script_asset   = chaveiro_get_named_script_asset('/assets/js/hero.js');
     $kanban_script_asset = chaveiro_get_named_script_asset('/assets/js/kanban.js');
+
+    $bootstrap_util_asset = chaveiro_get_named_script_asset('/vendor/bootstrap/js/dist/util.js');
+    $bootstrap_collapse_asset = chaveiro_get_named_script_asset('/vendor/bootstrap/js/dist/collapse.js');
+    $bootstrap_carousel_asset = chaveiro_get_named_script_asset('/vendor/bootstrap/js/dist/carousel.js');
 
     $is_home_context = is_front_page() || is_home();
 
@@ -507,7 +524,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Global: o modal é usado pelo formulário do menu em todo o site.
     $modal_css = chaveiro_get_minified_css_asset('/assets/css/modal.css');
     if ($modal_css) {
         wp_enqueue_style(
@@ -518,7 +534,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Global: WhatsApp flutuante e barra mobile podem aparecer em todo o site.
     $whatsapp_css = chaveiro_get_minified_css_asset('/assets/css/whatsapp.css');
     if ($whatsapp_css) {
         wp_enqueue_style(
@@ -529,7 +544,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home only
     $hero_css = chaveiro_get_minified_css_asset('/assets/css/hero.css');
     if ($is_home_context && $hero_css) {
         wp_enqueue_style(
@@ -540,7 +554,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home only
     $sobre_css = chaveiro_get_minified_css_asset('/assets/css/sobre.css');
     if ($is_home_context && $sobre_css) {
         wp_enqueue_style(
@@ -551,7 +564,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home + contexto de serviços
     $servicos_css = chaveiro_get_minified_css_asset('/assets/css/servicos.css');
     if ($is_servicos_context && $servicos_css) {
         wp_enqueue_style(
@@ -562,7 +574,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home + contexto de produtos
     $produtos_css = chaveiro_get_minified_css_asset('/assets/css/produtos.css');
     if ($is_produtos_context && $produtos_css) {
         wp_enqueue_style(
@@ -573,7 +584,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home only
     $faq_css = chaveiro_get_minified_css_asset('/assets/css/faq.css');
     if ($is_home_context && $faq_css) {
         wp_enqueue_style(
@@ -584,7 +594,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Global
     $footer_css = chaveiro_get_minified_css_asset('/assets/css/footer-config.css');
     if ($footer_css) {
         wp_enqueue_style(
@@ -595,7 +604,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home only
     $avaliacoes_css = chaveiro_get_minified_css_asset('/assets/css/avaliacoes.css');
     if ($is_home_context && $avaliacoes_css) {
         wp_enqueue_style(
@@ -606,7 +614,6 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Mantido global por segurança até definirmos o contexto exato de uso.
     $kanban_css = chaveiro_get_minified_css_asset('/assets/css/kanban.css');
     if ($kanban_css) {
         wp_enqueue_style(
@@ -619,20 +626,41 @@ function chaveiro_enqueue_assets()
 
     wp_enqueue_script('jquery');
 
-    wp_enqueue_script(
-        'bootstrap-4-bundle',
-        'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js',
-        array('jquery'),
-        '4.6.2',
-        true
-    );
+    if ($bootstrap_util_asset) {
+        wp_enqueue_script(
+            'bootstrap-util',
+            $bootstrap_util_asset['uri'],
+            array('jquery'),
+            $bootstrap_util_asset['version'],
+            true
+        );
+    }
 
-    // Core global
+    if ($bootstrap_collapse_asset) {
+        wp_enqueue_script(
+            'bootstrap-collapse',
+            $bootstrap_collapse_asset['uri'],
+            array('jquery', 'bootstrap-util'),
+            $bootstrap_collapse_asset['version'],
+            true
+        );
+    }
+
+    if ($bootstrap_carousel_asset) {
+        wp_enqueue_script(
+            'bootstrap-carousel',
+            $bootstrap_carousel_asset['uri'],
+            array('jquery', 'bootstrap-util'),
+            $bootstrap_carousel_asset['version'],
+            true
+        );
+    }
+
     if ($core_script_asset) {
         wp_enqueue_script(
             'chaveiro-scripts',
             $core_script_asset['uri'],
-            array('jquery', 'bootstrap-4-bundle'),
+            array('jquery', 'bootstrap-collapse'),
             $core_script_asset['version'],
             true
         );
@@ -646,12 +674,11 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Global: o formulário do menu depende disso em todo o site.
     if ($modal_script_asset) {
         wp_enqueue_script(
             'chaveiro-modal-script',
             $modal_script_asset['uri'],
-            array('jquery', 'bootstrap-4-bundle'),
+            array('jquery'),
             $modal_script_asset['version'],
             true
         );
@@ -665,18 +692,16 @@ function chaveiro_enqueue_assets()
         );
     }
 
-    // Home only
     if ($is_home_context && $hero_script_asset) {
         wp_enqueue_script(
             'chaveiro-hero-script',
             $hero_script_asset['uri'],
-            array('jquery', 'bootstrap-4-bundle'),
+            array('jquery', 'bootstrap-carousel'),
             $hero_script_asset['version'],
             true
         );
     }
 
-    // Mantido global por segurança até definirmos o contexto exato de uso.
     if ($kanban_script_asset) {
         wp_enqueue_script(
             'chaveiro-kanban-script',
@@ -803,6 +828,30 @@ function chaveiro_apply_preset()
 }
 add_action('wp_ajax_apply_preset', 'chaveiro_apply_preset');
 
+add_action('wp_ajax_apply_preset', 'chaveiro_apply_preset');
+
+
+// ==============================
+// DESABILITAR EMOJIS DO WORDPRESS
+// ==============================
+
+function chaveiro_disable_wp_emojis()
+{
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+
+    remove_action('admin_print_scripts', 'print_emoji_detection_script');
+    remove_action('admin_print_styles', 'print_emoji_styles');
+
+    remove_filter('the_content_feed', 'wp_staticize_emoji');
+    remove_filter('comment_text_rss', 'wp_staticize_emoji');
+
+    remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
+}
+
+add_action('init', 'chaveiro_disable_wp_emojis');
+
+
 // ==============================
 // BASE MULTI-CLIENTE
 // ==============================
@@ -824,4 +873,4 @@ function chaveiro_lp_shortcode()
     include get_template_directory() . '/index.php';
     return ob_get_clean();
 }
-add_shortcode('lp_chaveiro', 'chaveiro_lp_shortcode');
+add_shortcode('lp_chaveiro', 'lp_chaveiro');
